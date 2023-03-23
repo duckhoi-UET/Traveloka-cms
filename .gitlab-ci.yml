@@ -1,0 +1,39 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  CI_REGISTRY: gitlab.flextech.asia:5050
+  IMAGE_TAG: $CI_REGISTRY/ezi-hotel/os-web-cms:$CI_COMMIT_REF_NAME
+
+build:
+  stage: build
+  retry: 2
+  script:
+    - echo $IMAGE_TAG-$CI_COMMIT_SHORT_SHA
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - DOCKER_BUILDKIT=1 docker build -t $IMAGE_TAG -f Dockerfile .
+    - docker push $IMAGE_TAG
+  only:
+    - develop
+    - master
+
+deploy_develop:
+  stage: deploy
+  script:
+    - echo image_tag $IMAGE_TAG ci_commit $CI_COMMIT_SHORT_SHA
+    - curl -XPOST $WWW_WEBHOOK
+  environment:
+    name: develop
+  only:
+    - develop
+
+deploy_master:
+  stage: deploy
+  script:
+    - echo image_tag $IMAGE_TAG ci_commit $CI_COMMIT_SHORT_SHA
+    - curl -XPOST $WWW_WEBHOOK
+  environment:
+    name: master
+  only:
+    - master
