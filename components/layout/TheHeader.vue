@@ -102,6 +102,10 @@ export default {
       );
     },
   },
+  mounted() {
+    window.addEventListener("resize", this.onResize);
+    this.onResize();
+  },
 
   methods: {
     collapseSidebar() {
@@ -115,6 +119,12 @@ export default {
       await this.$auth.logout();
       this.$router.push("/login");
     },
+    onResize() {
+      this.sidebarVisible = false;
+    },
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.onResize);
   },
 };
 </script>

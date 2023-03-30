@@ -1,5 +1,10 @@
 <template>
-  <a-layout-sider v-model="collapsed" :trigger="null" collapsible>
+  <a-layout-sider
+    :width="'256px'"
+    v-model="collapsed"
+    :trigger="null"
+    collapsible
+  >
     <SidebarItem :collapsed="collapsed" />
   </a-layout-sider>
 </template>

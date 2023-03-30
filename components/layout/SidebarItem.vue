@@ -14,22 +14,31 @@
       @click="handleClick"
       @openChange="handleOpenChange"
     >
-      <a-sub-menu v-for="sidebarItem in SIDEBAR_ITEMS" :key="sidebarItem.route">
-        <template slot="title">
-          <i :class="sidebarItem.icon" />
-          <span v-if="!collapsed" class="truncate">{{
-            sidebarItem.label
-          }}</span>
-        </template>
-        <template v-for="sidebarItemChild in sidebarItem.childs">
-          <a-menu-item
-            v-if="sidebarItemChild.route"
-            :key="sidebarItemChild.route"
-          >
-            <span class="truncate">{{ sidebarItemChild.label }}</span>
-          </a-menu-item>
-        </template>
-      </a-sub-menu>
+      <template v-for="sidebarItem in SIDEBAR_ITEMS">
+        <a-menu-item v-if="!sidebarItem.childs.length" :key="sidebarItem.route">
+          <i class="mr-2" :class="sidebarItem.icon" />
+          <span v-if="!collapsed" class="truncate">
+            {{ sidebarItem.label }}
+          </span>
+        </a-menu-item>
+
+        <a-sub-menu v-if="sidebarItem.childs.length" :key="sidebarItem.route">
+          <template slot="title">
+            <i class="mr-2" :class="sidebarItem.icon" />
+            <span v-if="!collapsed" class="truncate">{{
+              sidebarItem.label
+            }}</span>
+          </template>
+          <template v-for="sidebarItemChild in sidebarItem.childs">
+            <a-menu-item
+              v-if="sidebarItemChild.route"
+              :key="sidebarItemChild.route"
+            >
+              <span class="truncate">{{ sidebarItemChild.label }}</span>
+            </a-menu-item>
+          </template>
+        </a-sub-menu>
+      </template>
     </a-menu>
   </div>
 </template>

@@ -36,10 +36,19 @@ export default {
       collapsed: false,
     };
   },
+  created() {
+    if (localStorage.getItem("collapsed")) {
+      this.collapsed = JSON.parse(localStorage.getItem("collapsed"));
+    }
+  },
   methods: {
     collapseSidebar() {
       this.collapsed = !this.collapsed;
+      localStorage.setItem("collapsed", JSON.stringify(this.collapsed));
     },
+  },
+  beforeDestroy() {
+    localStorage.removeItem("collapsed");
   },
 };
 </script>
