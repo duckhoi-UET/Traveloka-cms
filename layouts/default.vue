@@ -1,42 +1,62 @@
 <template>
-  <div class="min-h-screen flex flex-col">
-    <Header class="sticky top-0 w-full z-40" />
-    <Banner class="absolute top-0" />
-    <div class="absolute z-50 top-1/4 left-1/2 -translate-x-1/2 text-center">
-      <h1
-        class="text-7xl outline-4 text-white shadow-2xl font-bold mb-1"
-        style="font-family: roboto"
-      >
-        BẠN ĐANG MUỐN ĐI ĐÂU?
-      </h1>
-      <span
-        class="outline-4 text-white shadow-2xl text-2xl"
-        style="font-family: roboto"
-        >Hãy để Cattour tư vấn cho bạn chuyến đi tuyệt vời nhất!</span
-      >
-    </div>
+  <a-layout
+    id="components-layout-demo-custom-trigger"
+    class="!h-full !min-h-screen flex flex-col"
+  >
+    <Sidebar :collapsed="collapsed" />
 
-    <div
-      class="container mx-auto max-w-[1200px] flex-grow my-4 xl:my-8 px-4 xl:px-0"
-    >
-      <nuxt v-if="!$slots.default" />
-      <slot />
-    </div>
-    <Footer />
-  </div>
+    <a-layout>
+      <Header @toggleSidebar="toggleSidebar"></Header>
+      <a-layout-content
+        :style="{
+          margin: '24px 16px',
+          padding: '24px',
+          background: '#fff',
+          minHeight: '280px',
+        }"
+      >
+        <nuxt />
+      </a-layout-content>
+    </a-layout>
+  </a-layout>
 </template>
-
 <script>
-import Header from "@/components/layout/TheHeader.vue";
-import Footer from "@/components/layout/TheFooter.vue";
-import Banner from "@/components/banner/Banner.vue";
-
+import Sidebar from "../components/layout/TheSidebar.vue";
+import Header from "../components/layout/TheHeader.vue";
 export default {
   components: {
+    Sidebar,
     Header,
-    Footer,
-    Banner,
+  },
+  data() {
+    return {
+      collapsed: false,
+    };
+  },
+  methods: {
+    toggleSidebar() {
+      this.collapsed = !this.collapsed;
+    },
   },
 };
 </script>
+<style>
+#components-layout-demo-custom-trigger .trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+#components-layout-demo-custom-trigger .trigger:hover {
+  color: #1890ff;
+}
+
+#components-layout-demo-custom-trigger .logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px;
+}
+</style>
 

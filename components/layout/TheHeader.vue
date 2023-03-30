@@ -1,58 +1,34 @@
 <template>
-  <div
-    class="py-4 px-4 md:px-6 flex justify-between items-center"
-    :class="
-      isShowHeader
-        ? 'bg-white border-b border-gray-5 shadow-sm'
-        : 'bg-transparent border-none'
-    "
+  <a-layout-header
+    style="background: #fff; padding: 0"
+    class="flex justify-between"
   >
-    <div>
-      <div class="md:hidden cursor-pointer" @click="toggleSidebar">
-        <i class="fas fa-bars text-lg" />
-      </div>
-      <div
-        class="hidden lg:block font-semibold text-xl"
-        :class="isShowHeader ? 'text-prim-100' : 'text-white drop-shadow-lg'"
-      >
-        Hệ thống quản trị khách sạn
-      </div>
-    </div>
-    <div class="flex items-center gap-6">
-      <a href="tel:024 35 683727" class="font-semibold">
-        <i
-          class="fas fa-phone-alt"
-          :class="isShowHeader ? 'text-gray-100' : 'text-white drop-shadow-lg'"
-        />
-        <span
-          class="hidden md:inline"
-          :class="isShowHeader ? 'text-red-100' : 'text-white drop-shadow-lg'"
-          >024 35 683727</span
-        >
-      </a>
-      <div
-        class="font-semibold"
-        :class="{ 'text-white drop-shadow-lg': !isShowHeader }"
-      >
-        <i class="fas fa-question-circle" />
-        <span class="hidden md:inline">Trợ giúp</span>
-      </div>
-      <div
-        :class="isShowHeader ? 'text-warning-100' : 'text-white drop-shadow-lg'"
-      >
-        <i class="fas fa-bell text-lg" />
+    <a-icon
+      class="trigger"
+      :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+      @click="toggleSidebar"
+    />
+
+    <div class="flex mr-6 gap-6">
+      <div class="flex items-center gap-6">
+        <a href="tel:024 35 683727" class="font-semibold">
+          <i class="fas fa-phone-alt text-gray-100" />
+          <span class="hidden md:inline text-red-100">024 35 683727</span>
+        </a>
+        <div class="font-semibold">
+          <i class="fas fa-question-circle" />
+          <span class="hidden md:inline">Trợ giúp</span>
+        </div>
+        <div class="text-warning-100">
+          <i class="fas fa-bell text-lg" />
+        </div>
       </div>
       <div class="flex items-center gap-2">
         <a-avatar>
           <i class="fas fa-user" />
         </a-avatar>
         <a-dropdown :trigger="['click']">
-          <div
-            class="cursor-pointer font-semibold"
-            :class="
-              isShowHeader ? 'text-gray-100' : 'text-white drop-shadow-lg'
-            "
-          >
+          <div class="cursor-pointer font-semibold text-gray-100">
             Đức Khôi
             <i class="fas fa-chevron-down" />
           </div>
@@ -85,7 +61,7 @@
     </a-drawer>
     <UpdateInfoDialog ref="updateInfoDialog" />
     <UpdatePasswordDialog ref="updatePasswordDialog" />
-  </div>
+  </a-layout-header>
 </template>
 
 <script>
@@ -105,14 +81,7 @@ export default {
   data() {
     return {
       sidebarVisible: false,
-      isShowHeader: false,
     };
-  },
-  mounted() {
-    window.addEventListener("scroll", this.handleScroll);
-  },
-  beforeDestroy() {
-    window.removeEventListener("scroll", this.handleScroll);
   },
 
   computed: {
@@ -127,19 +96,12 @@ export default {
 
   methods: {
     toggleSidebar() {
-      this.sidebarVisible = !this.sidebarVisible;
+      this.$emit("toggleSidebar");
     },
 
     async logout() {
       await this.$auth.logout();
       this.$router.push("/login");
-    },
-    handleScroll(event) {
-      if (window.scrollY > 500) {
-        this.isShowHeader = true;
-      } else {
-        this.isShowHeader = false;
-      }
     },
   },
 };
