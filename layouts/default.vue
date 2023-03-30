@@ -3,10 +3,13 @@
     id="components-layout-demo-custom-trigger"
     class="!h-full !min-h-screen flex flex-col"
   >
-    <Sidebar :collapsed="collapsed" />
+    <Sidebar class="hidden md:block" :collapsed="collapsed" />
 
     <a-layout>
-      <Header @toggleSidebar="toggleSidebar"></Header>
+      <Header
+        :collapsed="collapsed"
+        @collapseSidebar="collapseSidebar"
+      ></Header>
       <a-layout-content
         :style="{
           margin: '24px 16px',
@@ -34,7 +37,7 @@ export default {
     };
   },
   methods: {
-    toggleSidebar() {
+    collapseSidebar() {
       this.collapsed = !this.collapsed;
     },
   },

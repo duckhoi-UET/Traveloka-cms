@@ -1,0 +1,73 @@
+<template>
+  <div>
+    <div class="flex justify-between items-center pt-4 px-4">
+      <nuxt-link to="/">
+        <img src="/images/logo-3.png" width="150" />
+      </nuxt-link>
+    </div>
+    <a-menu
+      theme="dark"
+      :open-keys="openKeys"
+      :default-selected-keys="activeKeys"
+      class="!mt-6"
+      mode="inline"
+      @click="handleClick"
+      @openChange="handleOpenChange"
+    >
+      <a-sub-menu v-for="sidebarItem in SIDEBAR_ITEMS" :key="sidebarItem.route">
+        <template slot="title">
+          <i :class="sidebarItem.icon" />
+          <span v-if="!collapsed" class="truncate">{{
+            sidebarItem.label
+          }}</span>
+        </template>
+        <template v-for="sidebarItemChild in sidebarItem.childs">
+          <a-menu-item
+            v-if="sidebarItemChild.route"
+            :key="sidebarItemChild.route"
+          >
+            <span class="truncate">{{ sidebarItemChild.label }}</span>
+          </a-menu-item>
+        </template>
+      </a-sub-menu>
+    </a-menu>
+  </div>
+</template>
+
+<script>
+import SIDEBAR_ITEMS from "@/constants/sidebarItems";
+export default {
+  props: {
+    collapsed: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  data() {
+    return {
+      SIDEBAR_ITEMS,
+      isOpen: true,
+      openKeys: [],
+      logoutVisible: false,
+    };
+  },
+  computed: {
+    activeKeys() {
+      return [this.$route.path];
+    },
+  },
+
+  methods: {
+    handleClick({ key }) {
+      this.$router.push(key);
+    },
+
+    handleOpenChange(keys) {
+      this.openKeys = keys?.length ? [keys?.pop()] : [];
+    },
+  },
+};
+</script>
+
+<style></style>
+

@@ -4,10 +4,13 @@
     class="flex justify-between"
   >
     <a-icon
-      class="trigger"
+      class="trigger !hidden md:!block"
       :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-      @click="toggleSidebar"
+      @click="collapseSidebar"
     />
+    <div class="md:hidden ml-6 cursor-pointer" @click="toggleSidebar">
+      <i class="fas fa-bars text-lg" />
+    </div>
 
     <div class="flex mr-6 gap-6">
       <div class="flex items-center gap-6">
@@ -57,7 +60,7 @@
       placement="left"
       @close="sidebarVisible = false"
     >
-      <TheSidebar class="h-full" />
+      <SidebarItem :collapsed="collapsed" />
     </a-drawer>
     <UpdateInfoDialog ref="updateInfoDialog" />
     <UpdatePasswordDialog ref="updatePasswordDialog" />
@@ -65,14 +68,20 @@
 </template>
 
 <script>
-import TheSidebar from "@/components/layout/TheSidebar.vue";
+import SidebarItem from "@/components/layout/SidebarItem.vue";
 import NotificationPopover from "@/components/notifications/Popover.vue";
 import UpdateInfoDialog from "@/components/auth/dialogs/UpdateInfo.vue";
 import UpdatePasswordDialog from "@/components/auth/dialogs/UpdatePassword.vue";
 
 export default {
+  props: {
+    collapsed: {
+      type: Boolean,
+      default: true,
+    },
+  },
   components: {
-    TheSidebar,
+    SidebarItem,
     NotificationPopover,
     UpdateInfoDialog,
     UpdatePasswordDialog,
@@ -95,8 +104,11 @@ export default {
   },
 
   methods: {
+    collapseSidebar() {
+      this.$emit("collapseSidebar");
+    },
     toggleSidebar() {
-      this.$emit("toggleSidebar");
+      this.sidebarVisible = !this.sidebarVisible;
     },
 
     async logout() {
@@ -111,6 +123,11 @@ export default {
 .header-sidebar-drawer {
   .ant-drawer-body {
     @apply p-0 h-full #{!important};
+  }
+}
+.ant-drawer-content-wrapper {
+  .ant-drawer-content {
+    @apply bg-[#001529] #{!important};
   }
 }
 </style>
