@@ -6,13 +6,25 @@ export default [
     childs: [],
   },
   {
-    route: "/user",
-    label: "Danh sách người dùng",
-    icon: "fas fa-user",
+    route: "/banner",
+    label: "Quản lý banner",
+    icon: "fas fa-laptop-medical",
+    childs: [],
+  },
+  {
+    route: "/hotel-manager",
+    label: "Quản khách sạn",
+    icon: "fas fa-hotel",
     childs: [
       {
-        label: "Menu 2",
+        route: "/rooms",
+        label: "Quản lý phòng",
+        icon: "fas fa-door-open",
+      },
+      {
         route: "/users",
+        label: "Quản lý khách hàng",
+        icon: "fas fa-user",
       },
     ],
   },

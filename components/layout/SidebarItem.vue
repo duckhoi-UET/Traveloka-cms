@@ -45,6 +45,7 @@
 
 <script>
 import SIDEBAR_ITEMS from "@/constants/sidebarItems";
+import { emit } from "process";
 export default {
   props: {
     collapsed: {
@@ -69,6 +70,7 @@ export default {
   methods: {
     handleClick({ key }) {
       this.$router.push(key);
+      this.$emit("closeMenu");
     },
 
     handleOpenChange(keys) {

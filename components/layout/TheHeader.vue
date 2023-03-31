@@ -60,7 +60,7 @@
       placement="left"
       @close="sidebarVisible = false"
     >
-      <SidebarItem :collapsed="collapsed" />
+      <SidebarItem :collapsed="collapsed" @closeMenu="closeMenu" />
     </a-drawer>
     <UpdateInfoDialog ref="updateInfoDialog" />
     <UpdatePasswordDialog ref="updatePasswordDialog" />
@@ -113,6 +113,9 @@ export default {
     },
     toggleSidebar() {
       this.sidebarVisible = !this.sidebarVisible;
+    },
+    closeMenu() {
+      this.sidebarVisible = false;
     },
 
     async logout() {
