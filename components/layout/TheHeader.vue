@@ -60,7 +60,11 @@
       placement="left"
       @close="sidebarVisible = false"
     >
-      <SidebarItem :collapsed="collapsed" @closeMenu="closeMenu" />
+      <SidebarItem
+        :collapsed="collapsed"
+        :isMobile="isMobile"
+        @closeMenu="closeMenu"
+      />
     </a-drawer>
     <UpdateInfoDialog ref="updateInfoDialog" />
     <UpdatePasswordDialog ref="updatePasswordDialog" />
@@ -78,6 +82,10 @@ export default {
     collapsed: {
       type: Boolean,
       default: true,
+    },
+    isMobile: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {

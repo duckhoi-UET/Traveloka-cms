@@ -17,7 +17,7 @@
       <template v-for="sidebarItem in SIDEBAR_ITEMS">
         <a-menu-item v-if="!sidebarItem.childs.length" :key="sidebarItem.route">
           <i class="mr-2" :class="sidebarItem.icon" />
-          <span v-if="!collapsed" class="truncate">
+          <span v-if="!collapsed || isMobile" class="truncate">
             {{ sidebarItem.label }}
           </span>
         </a-menu-item>
@@ -25,7 +25,7 @@
         <a-sub-menu v-if="sidebarItem.childs.length" :key="sidebarItem.route">
           <template slot="title">
             <i class="mr-2" :class="sidebarItem.icon" />
-            <span v-if="!collapsed" class="truncate">{{
+            <span v-if="!collapsed || isMobile" class="truncate">{{
               sidebarItem.label
             }}</span>
           </template>
@@ -45,12 +45,15 @@
 
 <script>
 import SIDEBAR_ITEMS from "@/constants/sidebarItems";
-import { emit } from "process";
 export default {
   props: {
     collapsed: {
       type: Boolean,
       default: true,
+    },
+    isMobile: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

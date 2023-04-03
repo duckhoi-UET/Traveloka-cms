@@ -8,6 +8,7 @@
     <a-layout>
       <Header
         :collapsed="collapsed"
+        :isMobile="isMobile"
         @collapseSidebar="collapseSidebar"
       ></Header>
       <a-layout-content
@@ -34,21 +35,32 @@ export default {
   data() {
     return {
       collapsed: false,
+      isMobile: window.innerWidth <= 960,
     };
   },
   created() {
     if (localStorage.getItem("collapsed")) {
       this.collapsed = JSON.parse(localStorage.getItem("collapsed"));
     }
+    window.addEventListener("resize", this.onResize);
+    this.onResize();
   },
   methods: {
     collapseSidebar() {
       this.collapsed = !this.collapsed;
       localStorage.setItem("collapsed", JSON.stringify(this.collapsed));
     },
+    onResize() {
+      if (window.innerWidth <= 960) {
+        this.isMobile = true;
+      } else {
+        this.isMobile = false;
+      }
+    },
   },
   beforeDestroy() {
     localStorage.removeItem("collapsed");
+    window.removeEventListener("resize", this.onResize);
   },
 };
 </script>
