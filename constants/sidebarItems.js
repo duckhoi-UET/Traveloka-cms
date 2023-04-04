@@ -12,6 +12,12 @@ export default [
     childs: [],
   },
   {
+    route: "/booking",
+    label: "Danh sách đặt phòng",
+    icon: "fas fa-money-check",
+    childs: [],
+  },
+  {
     route: "/hotel-manager",
     label: "Quản khách sạn",
     icon: "fas fa-hotel",
