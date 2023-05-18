@@ -17,7 +17,7 @@ export default {
   },
 
   head: {
-    title: "ezi-hotel",
+    title: "Quản lý khách sạn",
     htmlAttrs: {
       lang: "en",
     },
@@ -160,4 +160,3 @@ export default {
     RSA_PUBLIC_KEY: process.env.RSA_PUBLIC_KEY,
   },
 };
-
