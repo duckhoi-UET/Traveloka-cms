@@ -2,7 +2,7 @@
   <div>
     <div class="flex justify-between items-center pt-4 px-4">
       <nuxt-link to="/">
-        <img src="/images/logo-3.png" width="150" />
+        <img src="/images/logo-2.png" width="150" />
       </nuxt-link>
     </div>
     <a-menu
@@ -84,4 +84,3 @@ export default {
 </script>
 
 <style></style>
-

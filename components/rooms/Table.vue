@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-table :data-source="booking" :loading="loading" :pagination="false">
+    <a-table :data-source="users" :loading="loading" :pagination="false">
       <a-table-column
         v-if="pagination"
         key="index"
@@ -10,71 +10,54 @@
       />
       <a-table-column
         key="fullName"
-        title="Họ Tên"
+        title="Tên phòng"
         :width="200"
         data-index="fullName"
         class="font-semibold"
       />
       <a-table-column
-        key="numberCard"
-        title="CCCD/CMND"
-        data-index="numberCard"
+        key="price"
+        title="Giá"
+        data-index="price"
         class="font-semibold"
         :width="130"
       />
-      <a-table-column key="phone" title="SĐT" data-index="phone" :width="150">
+      <a-table-column
+        key="discount"
+        title="Giảm giá"
+        data-index="discount"
+        :width="150"
+      >
         <template #default="phone">
           {{ phone | phoneFormat }}
         </template>
       </a-table-column>
       <a-table-column
-        key="email"
-        title="Email"
-        data-index="email"
+        key="image"
+        title="Hình ảnh"
+        data-index="image"
         :width="220"
       />
       <a-table-column
-        key="createTime"
-        title="Ngày Đặt"
-        data-index="createTime"
+        key="groups"
+        title="Số người"
+        data-index="groups"
         :width="180"
       >
+        <template #default="groups">
+          {{ getGroupName(groups) || "-" }}
+        </template>
       </a-table-column>
-      <a-table-column key="status" title="Trạng Thái" :width="120">
+      <a-table-column key="status" title="Trạng thái" :width="120">
         <template #default="user">
-          <a-switch
-            :checked="!!user?.status?.id"
-            @change="toggleStatus(user)"
-          />
+          <a-switch :checked="!!user.status.id" @change="toggleStatus(user)" />
         </template>
       </a-table-column>
       <a-table-column key="actions" align="right" :width="80">
         <template #default="_user">
-          <a-dropdown :trigger="['click']">
-            <div class="cursor-pointer hover:text-red-100">
-              <i class="fas fa-ellipsis-h text-xl"></i>
-            </div>
-            <a-menu slot="overlay">
-              <a-menu-item key="0">
-                <div>
-                  <i class="fas fa-eye mr-2"></i>
-                  <a :href="_user">Xem chi tiết</a>
-                </div>
-              </a-menu-item>
-              <a-menu-item key="1">
-                <div>
-                  <i class="fas fa-phone mr-2"></i>
-                  <a href="http://www.taobao.com/">Liên hệ</a>
-                </div>
-              </a-menu-item>
-
-              <a-menu-item key="3">
-                <div class="text-red-100">
-                  <i class="fas fa-trash mr-2"></i> Xóa
-                </div>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
+          <button @click="openUserDialog(_user)">
+            <i class="text-gray-80 fas fa-pen" />
+          </button>
         </template>
       </a-table-column>
     </a-table>
@@ -93,7 +76,7 @@ export default {
   },
 
   props: {
-    booking: {
+    users: {
       type: Array,
       required: true,
     },
@@ -109,7 +92,12 @@ export default {
 
   methods: {
     getIndex(text, record, index) {
-      return index + 1;
+      return (
+        (parseInt(+this.pagination.start + 1, 10) - 1) *
+          this.pagination.length +
+        index +
+        1
+      );
     },
 
     getGroupName(groups) {

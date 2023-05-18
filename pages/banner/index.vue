@@ -1,5 +1,7 @@
 <template>
-  <div>banner</div>
+  <div class="font-semibold text-prim-100 text-2xl capitalize">
+    Quản lý banner
+  </div>
 </template>
 
 <script>
@@ -13,4 +15,3 @@ export default {
 </script>
 
 <style></style>
-
