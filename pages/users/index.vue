@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex justify-between items-center">
-      <div class="font-semibold text-prim-100 text-xl">
+      <div class="font-semibold text-prim-100 text-2xl capitalize">
         Danh sách người dùng
       </div>
       <a-button type="primary" ghost @click="$refs.userDialog.open()">
@@ -75,7 +75,7 @@ export default {
 
   head() {
     return {
-      title: "Danh sách người dùng | Nuxt Boilerplate",
+      title: "Danh sách người dùng",
     };
   },
 };

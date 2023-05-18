@@ -1,36 +1,39 @@
-import PAGINATION_CONFIG from '@/configs/pagination';
+import PAGINATION_CONFIG from "@/configs/pagination";
 
 export const state = () => ({
-    users: [],
-    pagination: {},
+  users: [],
+  pagination: {
+    recordsTotal: 10,
+    page: 10,
+  },
 });
 
-export const getters = {
-};
+export const getters = {};
 
 export const mutations = {
-    SET_USERS(state, payload) {
-        state.users = payload;
-    },
+  SET_USERS(state, payload) {
+    state.users = payload;
+  },
 
-    SET_HOUSEKEEPINGS(state, payload) {
-        state.housekeepings = payload;
-    },
+  SET_HOUSEKEEPINGS(state, payload) {
+    state.housekeepings = payload;
+  },
 
-    SET_PAGINATION(state, payload) {
-        state.pagination = payload;
-    },
+  SET_PAGINATION(state, payload) {
+    state.pagination = payload;
+  },
 };
 
 export const actions = {
-    async fetchAll({ commit }, { hotelId, query }) {
-        const { data, recordsTotal } = await this.$api.users.getAll(hotelId, query);
+  async fetchAll({ commit }, { hotelId, query }) {
+    const { data, recordsTotal } = await this.$api.users.getAll(hotelId, query);
 
-        commit('SET_USERS', data);
-        commit('SET_PAGINATION', {
-            start: query?.start || 0,
-            length: PAGINATION_CONFIG.PER_PAGE,
-            recordsTotal,
-        });
-    },
+    commit("SET_USERS", data);
+    commit("SET_PAGINATION", {
+      start: query?.start || 0,
+      length: PAGINATION_CONFIG.PER_PAGE,
+      recordsTotal,
+    });
+  },
 };
+
