@@ -11,7 +11,7 @@
       <a-table-column
         key="fullName"
         title="Họ Tên"
-        :width="200"
+        :width="170"
         data-index="fullName"
         class="font-semibold"
       />
@@ -20,7 +20,7 @@
         title="CCCD/CMND"
         data-index="numberCard"
         class="font-semibold"
-        :width="130"
+        :width="120"
       />
       <a-table-column key="phone" title="SĐT" data-index="phone" :width="150">
         <template #default="phone">
@@ -31,23 +31,30 @@
         key="email"
         title="Email"
         data-index="email"
-        :width="220"
+        :width="200"
       />
       <a-table-column
         key="createTime"
         title="Ngày Đặt"
         data-index="createTime"
-        :width="180"
+        :width="150"
       >
       </a-table-column>
-      <a-table-column key="status" title="Trạng Thái" :width="120">
+      <a-table-column
+        key="roomKey"
+        title="Số phòng"
+        data-index="roomKey"
+        :width="100"
+      >
+      </a-table-column>
+      <a-table-column key="status" title="Trạng Thái" :width="110">
         <template #default="user">
-          <a-switch
-            :checked="!!user?.status?.id"
-            @change="toggleStatus(user)"
-          />
+          <a-tag :color="user.status === 'SUCCESS' ? 'green' : 'orange'">
+            {{ user.status === "SUCCESS" ? "Đã xác nhận" : "Chờ xác nhận" }}
+          </a-tag>
         </template>
       </a-table-column>
+
       <a-table-column key="actions" align="right" :width="80">
         <template #default="_user">
           <a-dropdown :trigger="['click']">

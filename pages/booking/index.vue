@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="booking?.length">
     <div class="flex justify-between items-center">
       <div class="font-semibold text-prim-100 text-2xl capitalize">
         Danh sách đặt phòng
@@ -7,6 +7,9 @@
       <!-- <a-button type="primary" ghost @click="$refs.userDialog.open()">
         Thêm mới
       </a-button> -->
+    </div>
+    <div class="mt-4">
+      <FilterTable />
     </div>
     <BookingTable
       class="mt-4"
@@ -28,20 +31,20 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import UserDialog from "@/components/users/Dialog.vue";
 import BookingTable from "@/components/booking/Table.vue";
+import FilterTable from "@/components/booking/Filter.vue";
+import generate from "@/mixins/generate";
 
 export default {
   auth: false,
+  mixins: [generate],
 
   components: {
     UserDialog,
     BookingTable,
-  },
-
-  async fetch() {
-    // await this.fetchData();
+    FilterTable,
   },
 
   data() {
@@ -53,23 +56,27 @@ export default {
   computed: {
     ...mapState("booking", ["booking", "pagination"]),
   },
-
-  // async watchQuery(query) {
-  //     await this.fetchData(query);
-  // },
+  mounted() {
+    this.generateData();
+  },
 
   methods: {
-    async fetchData(query) {
-      try {
-        this.loading = true;
-        await this.$store.dispatch("users/fetchAll", {
-          query: query || this.$route.query,
-        });
-      } catch (error) {
-        this.$handleError(error);
-      } finally {
-        this.loading = false;
+    ...mapActions("booking", ["setBooking"]),
+    generateData() {
+      let data = [];
+      for (let i = 0; i < 45; i++) {
+        let item = {
+          fullName: this.generateFullName(),
+          numberCard: this.generateRandomNumberCard(),
+          phone: this.generatePhoneNumber(),
+          email: this.generateEmail(),
+          status: i % 3 === 0 ? "SUCCESS" : "PENDING",
+          roomKey: this.generateRoom(),
+          createTime: this.generateDate(),
+        };
+        data.push(item);
       }
+      this.setBooking(data);
     },
   },
 
@@ -80,4 +87,3 @@ export default {
   },
 };
 </script>
-
