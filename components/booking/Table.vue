@@ -68,10 +68,10 @@
                   <a :href="_user">Xem chi tiết</a>
                 </div>
               </a-menu-item>
-              <a-menu-item key="1">
+              <a-menu-item v-if="_user.status !== 'SUCCESS'" key="1">
                 <div>
-                  <i class="fas fa-phone mr-2"></i>
-                  <a href="http://www.taobao.com/">Liên hệ</a>
+                  <i class="fas fa-check-circle mr-2"></i>
+                  <a href="http://www.taobao.com/">Xác nhận</a>
                 </div>
               </a-menu-item>
 
