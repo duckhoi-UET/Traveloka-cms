@@ -1,5 +1,5 @@
 <template>
-  <div v-if="booking?.length">
+  <div>
     <div class="flex justify-between items-center">
       <div class="font-semibold text-prim-100 text-2xl capitalize">
         Danh sách đặt phòng
@@ -9,7 +9,7 @@
       </a-button> -->
     </div>
     <div class="mt-4">
-      <FilterTable />
+      <FilterTable @onFilter="onFilter" @resetData="resetData" />
     </div>
     <BookingTable
       class="mt-4"
@@ -24,7 +24,7 @@
         Hiển thị {{ booking.length }} trong tổng số
         {{ pagination.recordsTotal }} mục
       </div>
-      <ct-pagination :data="pagination" />
+      <!-- <ct-pagination :data="pagination" /> -->
     </div>
     <UserDialog ref="userDialog" />
   </div>
@@ -61,7 +61,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("booking", ["setBooking"]),
+    ...mapActions("booking", ["setBooking", "filter"]),
     generateData() {
       let data = [];
       for (let i = 0; i < 45; i++) {
@@ -77,6 +77,12 @@ export default {
         data.push(item);
       }
       this.setBooking(data);
+    },
+    onFilter(data) {
+      this.filter(data);
+    },
+    resetData() {
+      this.filter(null);
     },
   },
 

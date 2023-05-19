@@ -21,10 +21,17 @@
         placeholder="Trạng thái"
         :options="BILL_STATUS_OPTIONS"
       />
-      <DateRangeFilter label="Ngày tạo" query="created" :allow-clear="false" />
+      <DateRangeFilter
+        ref="dateFilter"
+        label="Ngày tạo"
+        query="created"
+        :allow-clear="false"
+        customHandler
+        @onChange="onFilter"
+      />
     </div>
     <div class="flex justify-end gap-4 mt-4">
-      <a-button @click="empty"> Nhập lại </a-button>
+      <a-button @click="resetData"> Nhập lại </a-button>
       <a-button type="primary"> Tìm kiếm </a-button>
       <a-button type="primary" ghost>
         <i class="far fa-file-excel mr-2" /> Xuất dữ liệu
@@ -48,6 +55,15 @@ export default {
     SearchFilter,
     SelectFilter,
     SelectRemoteFilter,
+  },
+  methods: {
+    onFilter(data) {
+      this.$emit("onFilter", data);
+    },
+    resetData() {
+      this.$refs.dateFilter.clear();
+      this.$emit("resetData");
+    },
   },
 };
 </script>
