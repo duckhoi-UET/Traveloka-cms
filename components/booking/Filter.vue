@@ -19,7 +19,7 @@
         query="status"
         label="Trạng thái"
         placeholder="Trạng thái"
-        :options="BILL_STATUS_OPTIONS"
+        :options="status"
       />
       <DateRangeFilter
         ref="dateFilter"
@@ -55,6 +55,20 @@ export default {
     SearchFilter,
     SelectFilter,
     SelectRemoteFilter,
+  },
+  data() {
+    return {
+      status: [
+        {
+          value: "SUCCESS",
+          label: "Đã kích hoạt",
+        },
+        {
+          value: "PENDING",
+          label: "Chờ xác nhận",
+        },
+      ],
+    };
   },
   methods: {
     onFilter(data) {

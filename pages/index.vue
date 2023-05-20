@@ -1,10 +1,17 @@
 <template>
-  <div class="font-semibold text-prim-100 text-2xl capitalize">Trang chủ</div>
+  <div>
+    <div class="font-semibold text-prim-100 text-2xl capitalize">Trang chủ</div>
+    <LineChart />
+  </div>
 </template>
 
 <script>
+import LineChart from "@/components/charts/LineChart.vue";
 export default {
   auth: false,
+  components: {
+    LineChart,
+  },
 
   head() {
     return {
