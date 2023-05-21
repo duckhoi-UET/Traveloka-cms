@@ -64,7 +64,7 @@ export default {
     ...mapActions("booking", ["setBooking", "filter"]),
     generateData() {
       let data = [];
-      for (let i = 0; i < 45; i++) {
+      for (let i = 0; i < 60; i++) {
         let item = {
           fullName: this.generateFullName(),
           numberCard: this.generateRandomNumberCard(),

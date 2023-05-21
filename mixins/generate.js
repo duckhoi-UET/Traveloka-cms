@@ -54,15 +54,27 @@ export default {
       return soDienThoai;
     },
     generateDate() {
-      var ngay = Math.floor(Math.random() * 28) + 1;
-      var thang = Math.floor(Math.random() * 12) + 1;
-      var nam = Math.floor(Math.random() * 4) + 2020;
+      var nam = 2023;
+      var thang = Math.floor(Math.random() * 10) + 3; // Số ngẫu nhiên từ 3 đến 12
+      var ngay;
 
+      if (thang === 2) {
+        // Nếu là tháng 2, giới hạn ngày từ 1 đến 28
+        ngay = Math.floor(Math.random() * 28) + 1;
+      } else if (thang === 4 || thang === 6 || thang === 9 || thang === 11) {
+        // Nếu là tháng 4, 6, 9, hoặc 11, giới hạn ngày từ 1 đến 30
+        ngay = Math.floor(Math.random() * 30) + 1;
+      } else {
+        // Các tháng còn lại có 31 ngày
+        ngay = Math.floor(Math.random() * 31) + 1;
+      }
+
+      // Định dạng lại ngày, tháng, năm thành chuỗi "dd/mm/yyyy"
       var ngayChuoi = ngay < 10 ? "0" + ngay : ngay.toString();
       var thangChuoi = thang < 10 ? "0" + thang : thang.toString();
       var namChuoi = nam.toString();
 
-      var ngayNgauNhien = ngayChuoi + "/" + thangChuoi + "/" + namChuoi;
+      var ngayNgauNhien = thangChuoi + "/" + ngayChuoi + "/" + namChuoi;
       return ngayNgauNhien;
     },
     generateRoom() {

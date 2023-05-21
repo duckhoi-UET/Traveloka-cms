@@ -5,7 +5,7 @@ export const state = () => ({
   listBookingConst: [],
   pagination: {
     start: 1,
-    recordsTotal: 45,
+    recordsTotal: 60,
     page: 1,
     length: 10,
   },
