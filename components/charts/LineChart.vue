@@ -79,7 +79,7 @@ export default {
           {
             label: "Số lượt truy cập ",
             backgroundColor: "#f87979",
-            data: [0, 0, 0, 1059, 1597, 2074, 3027],
+            data: [0, 0, 0, 1059, 3282, 2074, 3027],
           },
         ],
       },
