@@ -70,7 +70,7 @@ export default {
           numberCard: this.generateRandomNumberCard(),
           phone: this.generatePhoneNumber(),
           email: this.generateEmail(),
-          status: i % 3 === 0 ? "SUCCESS" : "PENDING",
+          status: "SUCCESS",
           roomKey: this.generateRoom(),
           createTime: this.generateDate(),
         };
