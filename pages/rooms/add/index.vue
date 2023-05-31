@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center mb-4">
       <div class="font-semibold text-prim-100 text-2xl capitalize">
         Thêm mới phòng
       </div>

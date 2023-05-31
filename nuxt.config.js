@@ -154,6 +154,6 @@ export default {
   env: {
     API_HOST: process.env.API_HOST || "localhost",
     RSA_PUBLIC_KEY: process.env.RSA_PUBLIC_KEY,
+    API_KEY_EDITOR: process.env.API_KEY_EDITOR,
   },
 };
-
