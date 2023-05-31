@@ -31,8 +31,6 @@ import UserDialog from "@/components/rooms/Dialog.vue";
 import RoomTable from "@/components/rooms/Table.vue";
 
 export default {
-  auth: false,
-
   components: {
     UserDialog,
     RoomTable,
@@ -61,3 +59,4 @@ export default {
   },
 };
 </script>
+

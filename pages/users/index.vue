@@ -33,8 +33,6 @@ import UserDialog from "@/components/users/Dialog.vue";
 import UserTable from "@/components/users/Table.vue";
 
 export default {
-  auth: false,
-
   components: {
     UserDialog,
     UserTable,

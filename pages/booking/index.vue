@@ -38,9 +38,7 @@ import FilterTable from "@/components/booking/Filter.vue";
 import generate from "@/mixins/generate";
 
 export default {
-  auth: false,
   mixins: [generate],
-
   components: {
     UserDialog,
     BookingTable,
@@ -93,3 +91,4 @@ export default {
   },
 };
 </script>
+

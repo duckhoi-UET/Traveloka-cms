@@ -8,7 +8,6 @@
 <script>
 import LineChart from "@/components/charts/LineChart.vue";
 export default {
-  auth: false,
   components: {
     LineChart,
   },
@@ -20,3 +19,4 @@ export default {
   },
 };
 </script>
+

@@ -27,12 +27,13 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <a-avatar>
+        <a-avatar v-if="authUser?.avatar" :src="authUser.avatar"> </a-avatar>
+        <a-avatar v-else>
           <i class="fas fa-user" />
         </a-avatar>
         <a-dropdown :trigger="['click']">
           <div class="cursor-pointer font-semibold text-gray-100">
-            Đức Khôi
+            {{ authUser.fullName }}
             <i class="fas fa-chevron-down" />
           </div>
           <template #overlay>

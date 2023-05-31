@@ -81,30 +81,26 @@ export default {
     strategies: {
       local: {
         token: {
-          property: "data.sid",
+          property: "token",
           global: true,
-          required: true,
-          name: "auth",
-          maxAge: 60 * 60 * 24 * 30,
-          type: false,
         },
         autoLogout: false,
         user: {
-          property: "data.account",
+          property: "user",
           autoFetch: true,
         },
         endpoints: {
           login: {
-            url: `${process.env.API_HOST}/user/login`,
+            url: `/login`,
             method: "POST",
           },
           logout: {
-            url: `${process.env.API_HOST}/user/logout`,
+            url: `/logout`,
             method: "GET",
           },
           user: {
-            url: `${process.env.API_HOST}/user/get_profile`,
-            method: "POST",
+            url: `/me`,
+            method: "GET",
           },
         },
         redirect: {
@@ -118,7 +114,7 @@ export default {
   },
 
   router: {
-    // middleware: ["auth"],
+    middleware: ["auth"],
   },
 
   build: {
@@ -160,3 +156,4 @@ export default {
     RSA_PUBLIC_KEY: process.env.RSA_PUBLIC_KEY,
   },
 };
+
