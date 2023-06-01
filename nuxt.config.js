@@ -155,4 +155,3 @@ export default {
     API_KEY_EDITOR: process.env.API_KEY_EDITOR,
   },
 };
-

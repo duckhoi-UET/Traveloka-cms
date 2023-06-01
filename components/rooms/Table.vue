@@ -2,7 +2,6 @@
   <div>
     <a-table :data-source="rooms" :loading="loading" :pagination="false">
       <a-table-column
-        v-if="pagination"
         key="index"
         title="STT"
         :width="60"
@@ -18,23 +17,32 @@
       <a-table-column
         key="price"
         title="Giá"
-        data-index="price"
         class="font-semibold"
-        :width="130"
-      />
-      <a-table-column key="discount" title="Giảm giá" :width="150">
+        :width="180"
+      >
+        <template #default="room">
+          {{ currencyFormat(room.price) }}
+        </template>
+      </a-table-column>
+      <a-table-column key="discount" title="Giảm giá" :width="100">
         <template #default="room"> {{ room.discount }}% </template>
       </a-table-column>
-      <a-table-column
-        key="image"
-        title="Hình ảnh"
-        data-index="image"
-        :width="220"
-      />
+      <a-table-column key="image" title="Hình ảnh" align="center" :width="220">
+        <template #default="room">
+          <div>
+            <img
+              class="shadow-md rounded-sm object-cover max-h-44 mx-auto"
+              :src="room.images[0]"
+              alt=""
+            />
+          </div>
+        </template>
+      </a-table-column>
       <a-table-column
         key="persons"
         title="Số người"
         data-index="persons"
+        align="center"
         :width="180"
       >
       </a-table-column>
@@ -59,11 +67,13 @@
 import _join from "lodash/join";
 import _map from "lodash/map";
 import UserDialog from "@/components/users/Dialog.vue";
+import generate from "../../mixins/generate";
 
 export default {
   components: {
     UserDialog,
   },
+  mixins: [generate],
 
   props: {
     rooms: {
@@ -82,12 +92,7 @@ export default {
 
   methods: {
     getIndex(text, record, index) {
-      return (
-        (parseInt(+this.pagination.start + 1, 10) - 1) *
-          this.pagination.length +
-        index +
-        1
-      );
+      return index + 1;
     },
 
     getGroupName(groups) {

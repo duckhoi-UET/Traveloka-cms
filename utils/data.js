@@ -1,9 +1,9 @@
 export function mapDataFromOptions(options, key, value) {
-    const pairs = {};
+  const pairs = {};
 
-    options.forEach((item) => {
-        pairs[item[key]] = item[value];
-    });
+  options.forEach((item) => {
+    pairs[item[key]] = item[value];
+  });
 
-    return pairs;
+  return pairs;
 }

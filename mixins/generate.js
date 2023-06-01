@@ -99,6 +99,9 @@ export default {
         reader.onerror = (error) => reject(error);
       });
     },
+    currencyFormat(number) {
+      return `${number ? parseInt(number, 10).toLocaleString("de-DE") : "0"} ₫`;
+    },
   },
 };
 
