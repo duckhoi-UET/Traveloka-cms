@@ -13,7 +13,7 @@
       <a-form-model-item label="Giá phòng" prop="price">
         <a-input v-model="form.price" placeholder="Giá phòng" />
       </a-form-model-item>
-      <a-form-model-item label="Giảm giá" prop="discount">
+      <a-form-model-item label="Giảm giá (%)" prop="discount">
         <a-input v-model="form.discount" placeholder="Giảm giá" />
       </a-form-model-item>
       <a-form-model-item label="Số người" prop="persons">
@@ -31,7 +31,7 @@
         </a-select>
       </a-form-model-item>
     </div>
-    <a-form-model-item label="Hình ảnh">
+    <a-form-model-item label="Hình ảnh" prop="images">
       <div v-if="fileList.length" class="flex gap-4 mb-4">
         <div
           class="img-card w-40 h-40 rounded overflow-hidden relative"
@@ -47,14 +47,32 @@
           <div
             class="img-action w-full h-full gap-2 absolute hidden top-0 left-0"
           >
-            <a-icon type="eye" class="text-white hover:text-red-100 text-2xl" />
             <a-icon
+              @click="handlePreviewImage(image.previewImage)"
+              type="eye"
+              class="!text-white hover:!text-red-100 text-3xl cursor-pointer"
+            />
+            <a-icon
+              @click="handleRemoveImage(image.id)"
               type="rest"
-              class="text-white hover:text-red-100 text-2xl"
+              class="!text-white hover:!text-red-100 text-3xl cursor-pointer"
             />
           </div>
         </div>
       </div>
+      <a-modal
+        :visible="previewVisible"
+        :footer="null"
+        @cancel="handleClosePreview"
+      >
+        <div class="">
+          <img
+            alt="example"
+            class="max-w-[350px] max-h-[500px] mx-auto"
+            :src="previewImage"
+          />
+        </div>
+      </a-modal>
       <a-upload
         v-if="fileList.length < 4"
         list-type="picture-card"
@@ -71,7 +89,15 @@
       </a-upload>
     </a-form-model-item>
     <a-form-model-item label="Nội dung">
-      <Editor />
+      <Editor @change="handleChangeContent" />
+    </a-form-model-item>
+    <a-form-model-item class="mt-4">
+      <a-button type="primary" :loading="isLoading" @click="onSubmit">
+        Thêm mới
+      </a-button>
+      <a-button style="margin-left: 10px" @click="handleCancel">
+        Hủy bỏ
+      </a-button>
     </a-form-model-item>
   </a-form-model>
 </template>
@@ -83,14 +109,16 @@ import { ROOM_STATUS_OPTIONS } from "@/constants/rooms";
 import Editor from "@/components/common/Editor";
 import generate from "../../mixins/generate";
 import { mapActions } from "vuex";
+import { v4 as uuidv4 } from "uuid";
 
 const defaultForm = {
   name: "",
   price: "",
-  discount: "",
+  discount: "0",
   persons: "",
   status: 1,
-  groups: [],
+  images: [],
+  content: "",
 };
 
 export default {
@@ -103,8 +131,34 @@ export default {
       ROOM_STATUS_OPTIONS,
       form: _cloneDeep(defaultForm),
       rules: {
-        fullName: [
-          { required: true, message: "Vui lòng nhập tên", trigger: "change" },
+        name: [
+          {
+            required: true,
+            message: "Vui lòng nhập tên phòng",
+            trigger: "change",
+          },
+        ],
+        price: [
+          {
+            required: true,
+            message: "Vui lòng nhập giá phòng",
+            trigger: "change",
+          },
+        ],
+        persons: [
+          {
+            required: true,
+            message: "Vui lòng nhập số người",
+            trigger: "change",
+          },
+        ],
+        images: [
+          {
+            type: "array",
+            required: true,
+            message: "Vui lòng tải lên ít nhất một ảnh",
+            trigger: "change",
+          },
         ],
       },
       previewVisible: false,
@@ -116,21 +170,30 @@ export default {
 
   methods: {
     ...mapActions(["uploadImage"]),
-    submit() {
-      this.$refs.form.validate((valid) => {
+    ...mapActions("rooms", ["createRoom"]),
+    onSubmit() {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
-          this.$emit("submit", this.form);
+          try {
+            this.isLoading = true;
+            const result = await this.createRoom(this.form);
+            if (result) {
+              this.$message.success("Đã tạo mới phòng thành công");
+              this.$router.push("/rooms");
+            }
+          } catch (error) {
+            this.$message.error("Tạo mới phòng thất bại. Vui lòng thử lại!");
+          } finally {
+            this.isLoading = false;
+          }
         }
       });
     },
-    handleCancel() {
+    handleClosePreview() {
       this.previewVisible = false;
     },
-    async handlePreview(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await this.getBase64(file.originFileObj);
-      }
-      this.previewImage = file.url || file.preview;
+    handlePreviewImage(previewImage) {
+      this.previewImage = previewImage;
       this.previewVisible = true;
     },
     async handleChange({ file }) {
@@ -145,16 +208,28 @@ export default {
           delete file.response;
           const image = {
             ...file,
+            id: uuidv4(),
             source: response.data.fileUrl,
             previewImage: preview,
           };
           this.fileList.push(image);
+          this.form.images.push(image.source);
         } catch (error) {
           console.log(error);
         } finally {
           this.isLoading = false;
         }
       }
+    },
+    handleChangeContent(value) {
+      this.form.content = value;
+    },
+    handleRemoveImage(id) {
+      this.fileList = this.fileList.filter((item) => item.id !== id);
+      this.form.images = this.fileList.map((item) => item.source);
+    },
+    handleCancel() {
+      this.$router.push("/rooms");
     },
   },
 };
@@ -164,7 +239,7 @@ export default {
 .img-card {
   &:hover {
     img {
-      opacity: 0.8;
+      opacity: 0.6;
     }
     .img-action {
       display: flex;
@@ -174,4 +249,3 @@ export default {
   }
 }
 </style>
-

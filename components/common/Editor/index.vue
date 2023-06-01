@@ -2,6 +2,7 @@
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
     <editor
+      v-model="content"
       api-key="lj9na738758cbj8dmbrgbyvoqbxizdasp0ochk60vx5lai82"
       :init="{
         height: 500,
@@ -16,6 +17,7 @@
             alignleft aligncenter alignright alignjustify | \
             bullist numlist outdent indent | removeformat | help',
       }"
+      @input="handleInput"
     />
   </div>
 </template>
@@ -27,6 +29,16 @@ export default {
   name: "Editor",
   components: {
     editor: Editor,
+  },
+  data() {
+    return {
+      content: "",
+    };
+  },
+  methods: {
+    handleInput() {
+      this.$emit("change", this.content);
+    },
   },
 };
 </script>

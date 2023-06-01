@@ -9,7 +9,7 @@
     <RoomTable
       class="mt-4"
       :loading="loading"
-      :users="users"
+      :rooms="rooms"
       :pagination="pagination"
     />
     <div
@@ -26,9 +26,10 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import UserDialog from "@/components/rooms/Dialog.vue";
 import RoomTable from "@/components/rooms/Table.vue";
+import { create } from "domain";
 
 export default {
   components: {
@@ -39,7 +40,11 @@ export default {
   data() {
     return {
       loading: false,
+      rooms: [],
     };
+  },
+  created() {
+    this.getAllData();
   },
 
   computed: {
@@ -47,8 +52,19 @@ export default {
   },
 
   methods: {
+    ...mapActions("rooms", ["getAllRooms"]),
     addRoom() {
       this.$router.push("/rooms/add");
+    },
+    async getAllData() {
+      try {
+        const response = await this.getAllRooms();
+        if (response) {
+          this.rooms = response.data.rooms;
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 
@@ -59,4 +75,3 @@ export default {
   },
 };
 </script>
-

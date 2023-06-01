@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-table :data-source="users" :loading="loading" :pagination="false">
+    <a-table :data-source="rooms" :loading="loading" :pagination="false">
       <a-table-column
         v-if="pagination"
         key="index"
@@ -9,10 +9,10 @@
         :custom-render="getIndex"
       />
       <a-table-column
-        key="fullName"
+        key="name"
         title="Tên phòng"
         :width="200"
-        data-index="fullName"
+        data-index="name"
         class="font-semibold"
       />
       <a-table-column
@@ -22,15 +22,8 @@
         class="font-semibold"
         :width="130"
       />
-      <a-table-column
-        key="discount"
-        title="Giảm giá"
-        data-index="discount"
-        :width="150"
-      >
-        <template #default="phone">
-          {{ phone | phoneFormat }}
-        </template>
+      <a-table-column key="discount" title="Giảm giá" :width="150">
+        <template #default="room"> {{ room.discount }}% </template>
       </a-table-column>
       <a-table-column
         key="image"
@@ -39,14 +32,11 @@
         :width="220"
       />
       <a-table-column
-        key="groups"
+        key="persons"
         title="Số người"
-        data-index="groups"
+        data-index="persons"
         :width="180"
       >
-        <template #default="groups">
-          {{ getGroupName(groups) || "-" }}
-        </template>
       </a-table-column>
       <a-table-column key="status" title="Trạng thái" :width="120">
         <template #default="user">
@@ -76,7 +66,7 @@ export default {
   },
 
   props: {
-    users: {
+    rooms: {
       type: Array,
       required: true,
     },
