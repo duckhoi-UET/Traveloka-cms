@@ -1,10 +1,10 @@
-export const state = () => ({
-});
+export const state = () => ({});
 
-export const getters = {
-};
+export const getters = {};
 
 export const actions = {
-    nuxtServerInit() {
-    },
+  uploadImage({}, file) {
+    return this.$axios.post("/upload-image", file);
+  },
 };
+

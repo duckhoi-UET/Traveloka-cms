@@ -6,29 +6,6 @@
     layout="vertical"
     :colon="false"
   >
-    <a-form-model-item label="Hình ảnh">
-      <a-upload
-        :action="false"
-        list-type="picture-card"
-        :file-list="fileList"
-        @preview="handlePreview"
-        @change="handleChange"
-      >
-        <div v-if="fileList.length < 8">
-          <a-icon type="plus" />
-          <div class="ant-upload-text">Upload</div>
-        </div>
-      </a-upload>
-      <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-        <div class="flex justify-center">
-          <img
-            alt="example"
-            class="max-w-3xl max-h-[500px]"
-            :src="previewImage"
-          />
-        </div>
-      </a-modal>
-    </a-form-model-item>
     <a-form-model-item label="Tên phòng" prop="name">
       <a-input v-model="form.name" placeholder="Tên phòng" />
     </a-form-model-item>
@@ -54,6 +31,45 @@
         </a-select>
       </a-form-model-item>
     </div>
+    <a-form-model-item label="Hình ảnh">
+      <div v-if="fileList.length" class="flex gap-4 mb-4">
+        <div
+          class="img-card w-40 h-40 rounded overflow-hidden relative"
+          v-for="(image, index) in fileList"
+          :key="index"
+        >
+          <img
+            class="w-full h-full object-cover"
+            v-if="image.previewImage"
+            :src="image.previewImage"
+            alt="avatar"
+          />
+          <div
+            class="img-action w-full h-full gap-2 absolute hidden top-0 left-0"
+          >
+            <a-icon type="eye" class="text-white hover:text-red-100 text-2xl" />
+            <a-icon
+              type="rest"
+              class="text-white hover:text-red-100 text-2xl"
+            />
+          </div>
+        </div>
+      </div>
+      <a-upload
+        v-if="fileList.length < 4"
+        list-type="picture-card"
+        :show-upload-list="false"
+        @change="handleChange"
+      >
+        <div>
+          <a-icon class="text-2xl" :type="isLoading ? 'loading' : 'plus'" />
+          <div class="ant-upload-text">
+            {{ isLoading ? "Đang tải lên..." : "Tải ảnh" }}
+          </div>
+        </div>
+        <a-icon />
+      </a-upload>
+    </a-form-model-item>
     <a-form-model-item label="Nội dung">
       <Editor />
     </a-form-model-item>
@@ -66,6 +82,7 @@ import _map from "lodash/map";
 import { ROOM_STATUS_OPTIONS } from "@/constants/rooms";
 import Editor from "@/components/common/Editor";
 import generate from "../../mixins/generate";
+import { mapActions } from "vuex";
 
 const defaultForm = {
   name: "",
@@ -93,10 +110,12 @@ export default {
       previewVisible: false,
       previewImage: "",
       fileList: [],
+      isLoading: false,
     };
   },
 
   methods: {
+    ...mapActions(["uploadImage"]),
     submit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
@@ -114,10 +133,45 @@ export default {
       this.previewImage = file.url || file.preview;
       this.previewVisible = true;
     },
-    handleChange({ fileList }) {
-      console.log(fileList);
-      this.fileList = fileList;
+    async handleChange({ file }) {
+      if (this.isLoading) return;
+      if (file.status === "done") {
+        try {
+          this.isLoading = true;
+          const preview = window.URL.createObjectURL(file.originFileObj);
+          const formData = new FormData();
+          formData.append("file", file.originFileObj);
+          const response = await this.uploadImage(formData);
+          delete file.response;
+          const image = {
+            ...file,
+            source: response.data.fileUrl,
+            previewImage: preview,
+          };
+          this.fileList.push(image);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          this.isLoading = false;
+        }
+      }
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.img-card {
+  &:hover {
+    img {
+      opacity: 0.8;
+    }
+    .img-action {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+</style>
+

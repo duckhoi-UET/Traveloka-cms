@@ -146,9 +146,7 @@ export default {
   },
 
   publicRuntimeConfig: {
-    googleAnalytics: {
-      id: process.env.GOOGLE_ANALYTICS_ID,
-    },
+    baseURL: process.env.API_HOST,
   },
 
   env: {
@@ -157,3 +155,4 @@ export default {
     API_KEY_EDITOR: process.env.API_KEY_EDITOR,
   },
 };
+
