@@ -1,7 +1,7 @@
 <template>
   <a-layout
     id="components-layout-demo-custom-trigger"
-    class="!h-full !min-h-screen flex flex-col"
+    class="h-screen flex flex-col"
   >
     <Sidebar class="hidden md:block" :collapsed="collapsed" />
 
@@ -18,6 +18,7 @@
           background: '#fff',
           minHeight: '280px',
         }"
+        class="overflow-y-auto overflow-x-hidden"
       >
         <nuxt />
       </a-layout-content>

@@ -17,11 +17,11 @@
     <div
       class="mt-4 flex flex-wrap md:flex-nowrap justify-center md:justify-between items-center gap-4"
     >
-      <div class="text-gray-80 italic">
+      <!-- <div class="text-gray-80 italic">
         Hiển thị {{ users.length }} trong tổng số
         {{ pagination.recordsTotal }} mục
       </div>
-      <ct-pagination :data="pagination" />
+      <ct-pagination :data="pagination" /> -->
     </div>
     <UserDialog ref="userDialog" />
   </div>

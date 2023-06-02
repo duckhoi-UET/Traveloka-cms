@@ -1,10 +1,10 @@
 <template>
   <a-pagination
-    v-if="pagination && pagination.length"
+    v-if="pagination"
     v-model.number="pagination.page"
     class="ct-pagination"
-    :total="pagination.recordsTotal"
-    :page-size="pagination.length"
+    :total="pagination.total"
+    :page-size="pagination.page_size"
     show-less-items
     @change="handleChangePage"
   />
@@ -20,6 +20,7 @@ export default {
     data: {
       type: Object,
       required: true,
+      default: null,
     },
     queryParam: {
       type: String,
@@ -29,19 +30,13 @@ export default {
 
   data() {
     return {
-      pagination: _clondeDeep({
-        ...this.data,
-        page: parseInt(this.data?.start, 10) + 1,
-      }),
+      pagination: _clondeDeep(this.data),
     };
   },
 
   watch: {
     data(value) {
-      this.pagination = _clondeDeep({
-        ...value,
-        page: parseInt(value.start, 10) + 1,
-      });
+      this.pagination = _clondeDeep(value);
     },
   },
 

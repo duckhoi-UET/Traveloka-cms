@@ -1,23 +1,23 @@
 <template>
   <div>
-    <div class="flex justify-between items-center">
-      <div class="font-semibold text-prim-100 text-2xl capitalize">
-        Quản lý phòng
-      </div>
-      <a-button type="primary" ghost @click="addRoom"> Thêm mới </a-button>
-    </div>
+    <PageHeader
+      title="Quản lý phòng"
+      isShowButtonRight
+      button="Thêm mới"
+      linkButton="/rooms/add"
+    />
     <RoomTable
       class="mt-4"
-      :loading="loading"
+      :loading="isLoading"
       :rooms="rooms"
       :pagination="pagination"
+      @update="reloadData"
     />
     <div
       class="mt-4 flex flex-wrap md:flex-nowrap justify-center md:justify-between items-center gap-4"
     >
       <div class="text-gray-80 italic">
-        Hiển thị {{ rooms.length }} trong tổng số
-        {{ pagination.recordsTotal }} mục
+        Hiển thị {{ rooms.length }} trong tổng số {{ pagination?.total }} mục
       </div>
       <ct-pagination :data="pagination" />
     </div>
@@ -29,41 +29,49 @@
 import { mapActions, mapState } from "vuex";
 import UserDialog from "@/components/rooms/Dialog.vue";
 import RoomTable from "@/components/rooms/Table.vue";
-import { create } from "domain";
+import PageHeader from "@/components/common/PageHeader";
 
 export default {
   components: {
     UserDialog,
     RoomTable,
+    PageHeader,
   },
 
   data() {
     return {
-      loading: false,
       rooms: [],
+      pagination: null,
     };
+  },
+  computed: {
+    ...mapState(["isLoading"]),
   },
   created() {
     this.getAllData();
   },
 
-  computed: {
-    ...mapState("users", ["users", "pagination"]),
-  },
-
   methods: {
     ...mapActions("rooms", ["getAllRooms"]),
+    ...mapActions(["setLoading"]),
     addRoom() {
       this.$router.push("/rooms/add");
     },
+    reloadData() {
+      this.getAllData();
+    },
     async getAllData() {
       try {
+        this.setLoading(true);
         const response = await this.getAllRooms();
         if (response) {
           this.rooms = response.data.rooms;
+          this.pagination = response.data.pagination;
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        this.setLoading(false);
       }
     },
   },
@@ -75,3 +83,4 @@ export default {
   },
 };
 </script>
+

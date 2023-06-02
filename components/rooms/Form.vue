@@ -40,15 +40,15 @@
         >
           <img
             class="w-full h-full object-cover"
-            v-if="image.previewImage"
-            :src="image.previewImage"
+            v-if="image.previewImage || image.source"
+            :src="image.previewImage || image.source"
             alt="avatar"
           />
           <div
             class="img-action w-full h-full gap-2 absolute hidden top-0 left-0"
           >
             <a-icon
-              @click="handlePreviewImage(image.previewImage)"
+              @click="handlePreviewImage(image.previewImage || image.source)"
               type="eye"
               class="!text-white hover:!text-red-100 text-3xl cursor-pointer"
             />
@@ -89,13 +89,18 @@
       </a-upload>
     </a-form-model-item>
     <a-form-model-item label="Nội dung">
-      <Editor @change="handleChangeContent" />
+      <Editor :data="form.content" @change="handleChangeContent" />
     </a-form-model-item>
-    <a-form-model-item class="mt-4">
-      <a-button type="primary" :loading="isLoading" @click="onSubmit">
-        Thêm mới
+    <a-form-model-item class="!mt-4">
+      <a-button
+        size="large"
+        type="primary"
+        :loading="isLoading"
+        @click="onSubmit"
+      >
+        {{ !isEdit ? "Thêm mới" : "Chỉnh sửa" }}
       </a-button>
-      <a-button style="margin-left: 10px" @click="handleCancel">
+      <a-button size="large" style="margin-left: 10px" @click="handleCancel">
         Hủy bỏ
       </a-button>
     </a-form-model-item>
@@ -108,7 +113,7 @@ import _map from "lodash/map";
 import { ROOM_STATUS_OPTIONS } from "@/constants/rooms";
 import Editor from "@/components/common/Editor";
 import generate from "../../mixins/generate";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import { v4 as uuidv4 } from "uuid";
 
 const defaultForm = {
@@ -116,13 +121,19 @@ const defaultForm = {
   price: "",
   discount: "0",
   persons: "",
-  status: 1,
+  status: "1",
   images: [],
   content: "",
 };
 
 export default {
   mixins: [generate],
+  props: {
+    isEdit: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     Editor,
   },
@@ -164,27 +175,64 @@ export default {
       previewVisible: false,
       previewImage: "",
       fileList: [],
-      isLoading: false,
     };
   },
 
+  computed: {
+    ...mapState(["isLoading"]),
+    ...mapState("rooms", ["detailRoom"]),
+  },
+  created() {
+    if (this.isEdit) {
+      this.form = _cloneDeep(this.detailRoom);
+      this.fileList = [...this.form.images];
+    }
+  },
+  watch: {
+    detailRoom: {
+      handler(value) {
+        this.form = _cloneDeep(value);
+        this.fileList = [...value.images];
+      },
+      deep: true,
+    },
+  },
+
   methods: {
-    ...mapActions(["uploadImage"]),
-    ...mapActions("rooms", ["createRoom"]),
+    ...mapActions(["uploadImage", "setLoading"]),
+    ...mapActions("rooms", ["createRoom", "updateRoom"]),
     onSubmit() {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
           try {
-            this.isLoading = true;
-            const result = await this.createRoom(this.form);
+            this.setLoading(true);
+            let result = null;
+            if (!this.isEdit) {
+              result = await this.createRoom(this.form);
+            } else {
+              result = await this.updateRoom({
+                id: this.form._id,
+                data: this.form,
+              });
+            }
             if (result) {
-              this.$message.success("Đã tạo mới phòng thành công");
+              if (!this.isEdit) {
+                this.$message.success("Đã tạo mới phòng thành công");
+              } else {
+                this.$message.success("Đã chỉnh sửa phòng thành công");
+              }
               this.$router.push("/rooms");
             }
           } catch (error) {
-            this.$message.error("Tạo mới phòng thất bại. Vui lòng thử lại!");
+            if (!this.isEdit) {
+              this.$message.error("Tạo mới phòng thất bại. Vui lòng thử lại!");
+            } else {
+              this.$message.success(
+                "Chỉnh sửa phòng thất bại. Vui lòng thử lại!"
+              );
+            }
           } finally {
-            this.isLoading = false;
+            this.setLoading(false);
           }
         }
       });
@@ -200,7 +248,7 @@ export default {
       if (this.isLoading) return;
       if (file.status === "done") {
         try {
-          this.isLoading = true;
+          this.setLoading(true);
           const preview = window.URL.createObjectURL(file.originFileObj);
           const formData = new FormData();
           formData.append("file", file.originFileObj);
@@ -213,11 +261,16 @@ export default {
             previewImage: preview,
           };
           this.fileList.push(image);
-          this.form.images.push(image.source);
+          this.form.images.push({
+            id: image.id,
+            source: image.source,
+          });
         } catch (error) {
-          console.log(error);
+          this.$message.error(
+            "Tải ảnh lên không thành công, vui lòng thử lại sau!"
+          );
         } finally {
-          this.isLoading = false;
+          this.setLoading(false);
         }
       }
     },
@@ -226,7 +279,10 @@ export default {
     },
     handleRemoveImage(id) {
       this.fileList = this.fileList.filter((item) => item.id !== id);
-      this.form.images = this.fileList.map((item) => item.source);
+      this.form.images = this.fileList.map((item) => ({
+        id: item.id,
+        source: item.source,
+      }));
     },
     handleCancel() {
       this.$router.push("/rooms");
@@ -249,3 +305,4 @@ export default {
   }
 }
 </style>
+

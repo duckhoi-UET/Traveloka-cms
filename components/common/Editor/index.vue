@@ -2,7 +2,7 @@
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
     <editor
-      v-model="content"
+      :value="data"
       api-key="lj9na738758cbj8dmbrgbyvoqbxizdasp0ochk60vx5lai82"
       :init="{
         height: 500,
@@ -30,14 +30,20 @@ export default {
   components: {
     editor: Editor,
   },
+  props: {
+    data: {
+      type: String,
+      default: "",
+    },
+  },
   data() {
     return {
       content: "",
     };
   },
   methods: {
-    handleInput() {
-      this.$emit("change", this.content);
+    handleInput(value) {
+      this.$emit("change", value);
     },
   },
 };

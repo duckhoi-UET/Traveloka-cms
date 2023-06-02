@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div class="flex justify-between items-center mb-4">
-      <div class="font-semibold text-prim-100 text-2xl capitalize">
-        Thêm mới phòng
-      </div>
-    </div>
+    <PageHeader title="Thêm Mới Phòng" back="/rooms" isShowButtonBack />
     <div>
       <RoomForm />
     </div>
@@ -12,14 +8,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 import RoomForm from "@/components/rooms/Form.vue";
+import PageHeader from "@/components/common/PageHeader";
 
 export default {
-  auth: false,
-
   components: {
     RoomForm,
+    PageHeader,
   },
 
   data() {
@@ -28,15 +23,11 @@ export default {
     };
   },
 
-  computed: {
-    ...mapState("users", ["users", "pagination"]),
-  },
-
   methods: {},
 
   head() {
     return {
-      title: "Quản lý phòng",
+      title: "Thêm mới phòng",
     };
   },
 };

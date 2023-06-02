@@ -1,6 +1,6 @@
 export const ROOM_STATUS = {
-  INACTIVE: 0,
-  ACTIVE: 1,
+  INACTIVE: "0",
+  ACTIVE: "1",
 };
 
 export const ROOM_STATUS_OPTIONS = [

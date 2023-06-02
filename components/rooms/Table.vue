@@ -31,8 +31,8 @@
         <template #default="room">
           <div>
             <img
-              class="shadow-md rounded-sm object-cover max-h-44 mx-auto"
-              :src="room.images[0]"
+              class="shadow-md rounded-sm object-cover max-h-44 max-w-[200px] mx-auto"
+              :src="room.images[0].source"
               alt=""
             />
           </div>
@@ -47,38 +47,81 @@
       >
       </a-table-column>
       <a-table-column key="status" title="Trạng thái" :width="120">
-        <template #default="user">
-          <a-switch :checked="!!user.status.id" @change="toggleStatus(user)" />
+        <template #default="room">
+          <a-tag :color="room.status != ROOM_STATUS.ACTIVE ? 'red' : 'green'">
+            {{ room.status != ROOM_STATUS.ACTIVE ? "Đã đặt" : "Còn phòng" }}
+          </a-tag>
         </template>
       </a-table-column>
       <a-table-column key="actions" align="right" :width="80">
-        <template #default="_user">
-          <button @click="openUserDialog(_user)">
-            <i class="text-gray-80 fas fa-pen" />
-          </button>
+        <template #default="_room">
+          <a-dropdown :trigger="['click']">
+            <div class="cursor-pointer hover:text-red-100">
+              <i class="fas fa-ellipsis-h text-xl"></i>
+            </div>
+            <a-menu slot="overlay">
+              <a-menu-item key="0" @click="handleToEditPage(_room._id)">
+                <div>
+                  <i class="fas fa-pen mr-2"></i>
+                  <span>Chỉnh sửa</span>
+                </div>
+              </a-menu-item>
+              <a-menu-item key="1">
+                <div>
+                  <i
+                    class="fas mr-2"
+                    :class="
+                      _room.status != ROOM_STATUS.ACTIVE
+                        ? 'fa-times-circle'
+                        : 'fa-check-circle'
+                    "
+                  ></i>
+                  <a href="http://www.taobao.com/">
+                    {{
+                      _room.status != ROOM_STATUS.ACTIVE
+                        ? "Hủy phòng"
+                        : "Đặt phòng"
+                    }}
+                  </a>
+                </div>
+              </a-menu-item>
+
+              <a-menu-item key="3" @click="confirmDeleteRoom(_room._id)">
+                <div class="text-red-100">
+                  <i class="fas fa-trash mr-2"></i> Xóa
+                </div>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
         </template>
       </a-table-column>
     </a-table>
-    <UserDialog ref="userDialog" />
+    <ct-confirm-dialog
+      ref="confirmDialog"
+      title="Xác nhận xóa"
+      confirmBtnType="danger"
+      :content="`Bạn có chắc chắn muốn xóa phòng  <span class='font-bold'>${roomDelete?.name}</span>  không?`"
+      :loading="isLoading"
+      @confirm="handleDeleteRoom"
+    />
   </div>
 </template>
 
 <script>
 import _join from "lodash/join";
 import _map from "lodash/map";
-import UserDialog from "@/components/users/Dialog.vue";
 import generate from "../../mixins/generate";
+import { ROOM_STATUS } from "@/constants/rooms";
+import { mapActions, mapState } from "vuex";
 
 export default {
-  components: {
-    UserDialog,
-  },
   mixins: [generate],
 
   props: {
     rooms: {
       type: Array,
       required: true,
+      default: () => [],
     },
     loading: {
       type: Boolean,
@@ -89,29 +132,49 @@ export default {
       required: false,
     },
   },
+  data() {
+    return {
+      ROOM_STATUS,
+      roomDelete: null,
+    };
+  },
+  computed: {
+    ...mapState(["isLoading"]),
+  },
 
   methods: {
+    ...mapActions("rooms", ["deleteRoom"]),
+    ...mapActions(["setLoading"]),
+
     getIndex(text, record, index) {
-      return index + 1;
+      return (this.pagination.page - 1) * this.pagination.page_size + index + 1;
     },
 
-    getGroupName(groups) {
-      return _join(_map(groups, "description"), ", ");
+    confirmDeleteRoom(id) {
+      this.roomDelete = this.rooms.find((room) => room._id === id);
+      this.$refs.confirmDialog.open();
     },
-
-    openUserDialog(user) {
-      this.$refs.userDialog.open(user);
-    },
-
-    async toggleStatus(user) {
+    async handleDeleteRoom() {
       try {
-        await this.$api.users.toggleStatus(user.userId);
-        await this.$nuxt.refresh();
-        this.$message.success("Cập nhật trạng thái user thành công");
+        this.setLoading(true);
+        const result = await this.deleteRoom({ id: this.roomDelete._id });
+        if (result) {
+          this.$emit("update");
+          this.$message.success("Đã xóa phòng thành công");
+          this.$refs.confirmDialog.close();
+        }
       } catch (error) {
-        this.$handleError(error);
+        this.$message.success(
+          "Xóa phòng không thành công, vui lòng thử lại sau"
+        );
+      } finally {
+        this.setLoading(false);
       }
+    },
+    handleToEditPage(id) {
+      this.$router.push(`/rooms/edit/${id}`);
     },
   },
 };
 </script>
+
