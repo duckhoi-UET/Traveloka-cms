@@ -29,7 +29,7 @@ export default [
       },
       {
         route: "/users",
-        label: "Quản lý khách hàng",
+        label: "Quản lý người dùng",
         icon: "fas fa-user",
       },
     ],

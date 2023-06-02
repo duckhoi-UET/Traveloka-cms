@@ -44,11 +44,18 @@ export default {
       pagination: null,
     };
   },
+
+  watch: {
+    "$route.query.page"(value) {
+      this.getAllData({ page: value });
+    },
+  },
+
   computed: {
     ...mapState(["isLoading"]),
   },
   created() {
-    this.getAllData();
+    this.getAllData({ page: this.$route.query?.page });
   },
 
   methods: {
@@ -58,12 +65,12 @@ export default {
       this.$router.push("/rooms/add");
     },
     reloadData() {
-      this.getAllData();
+      this.getAllData({ page: this.$route.query?.page });
     },
-    async getAllData() {
+    async getAllData(params) {
       try {
         this.setLoading(true);
-        const response = await this.getAllRooms();
+        const response = await this.getAllRooms(params);
         if (response) {
           this.rooms = response.data.rooms;
           this.pagination = response.data.pagination;

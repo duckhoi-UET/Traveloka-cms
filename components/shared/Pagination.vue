@@ -24,7 +24,7 @@ export default {
     },
     queryParam: {
       type: String,
-      default: "start",
+      default: "page",
     },
   },
 
@@ -43,6 +43,7 @@ export default {
   methods: {
     handleChangePage(page) {
       this.$router.push(this.to(page));
+      this.$emit("change");
     },
 
     to(page) {
@@ -51,9 +52,8 @@ export default {
       const otherParams = _omit(this.$route.query, [this.queryParam]);
       const query =
         page !== 1
-          ? _assign({}, otherParams, { [this.queryParam]: page - 1 })
+          ? _assign({}, otherParams, { [this.queryParam]: page })
           : otherParams;
-
       return { path, query };
     },
   },
