@@ -48,8 +48,8 @@
       </a-table-column>
       <a-table-column key="status" title="Trạng thái" :width="120">
         <template #default="room">
-          <a-tag :color="room.status != ROOM_STATUS.ACTIVE ? 'red' : 'green'">
-            {{ room.status != ROOM_STATUS.ACTIVE ? "Đã đặt" : "Còn phòng" }}
+          <a-tag :color="room.status != ROOM_STATUS.READY ? 'red' : 'green'">
+            {{ room.status != ROOM_STATUS.READY ? "Đã đặt" : "Còn phòng" }}
           </a-tag>
         </template>
       </a-table-column>
@@ -66,24 +66,22 @@
                   <span>Chỉnh sửa</span>
                 </div>
               </a-menu-item>
-              <a-menu-item key="1">
-                <div>
-                  <i
-                    class="fas mr-2"
-                    :class="
-                      _room.status != ROOM_STATUS.ACTIVE
-                        ? 'fa-times-circle'
-                        : 'fa-check-circle'
-                    "
-                  ></i>
-                  <a href="http://www.taobao.com/">
-                    {{
-                      _room.status != ROOM_STATUS.ACTIVE
-                        ? "Hủy phòng"
-                        : "Đặt phòng"
-                    }}
-                  </a>
-                </div>
+              <a-menu-item key="1" @click="handleToggleRoom(_room)">
+                <i
+                  class="fas mr-2"
+                  :class="
+                    _room.status != ROOM_STATUS.READY
+                      ? 'fa-times-circle'
+                      : 'fa-check-circle'
+                  "
+                ></i>
+                <span>
+                  {{
+                    _room.status != ROOM_STATUS.READY
+                      ? "Hủy phòng"
+                      : "Đặt phòng"
+                  }}
+                </span>
               </a-menu-item>
 
               <a-menu-item key="3" @click="confirmDeleteRoom(_room._id)">
@@ -98,11 +96,11 @@
     </a-table>
     <ct-confirm-dialog
       ref="confirmDialog"
-      title="Xác nhận xóa"
-      confirmBtnType="danger"
-      :content="`Bạn có chắc chắn muốn xóa phòng  <span class='font-bold'>${roomDelete?.name}</span>  không?`"
+      :title="dialog.title"
+      :confirmBtnType="dialog.confirmBtnType"
+      :content="dialog.content"
       :loading="isLoading"
-      @confirm="handleDeleteRoom"
+      @confirm="confirm"
     />
   </div>
 </template>
@@ -136,6 +134,7 @@ export default {
     return {
       ROOM_STATUS,
       roomDelete: null,
+      dialog: {},
     };
   },
   computed: {
@@ -152,7 +151,22 @@ export default {
 
     confirmDeleteRoom(id) {
       this.roomDelete = this.rooms.find((room) => room._id === id);
+      this.dialog = {
+        title: "Xác nhận xóa",
+        confirmBtnType: "danger",
+        content: `Bạn có chắc chắn muốn xóa phòng  <span class='font-bold'>${this.roomDelete?.name}</span>  không?`,
+      };
       this.$refs.confirmDialog.open();
+    },
+    handleToggleRoom(room) {
+      if (room.status == ROOM_STATUS.FULL) {
+        this.dialog = {
+          title: "Xác nhận hủy phòng",
+          confirmBtnType: "danger",
+          content: `Bạn có chắc chắn muốn huỷ phòng  <span class='font-bold'>${room.name}</span>  không?`,
+        };
+        this.$refs.confirmDialog.open();
+      }
     },
     async handleDeleteRoom() {
       try {
