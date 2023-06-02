@@ -183,9 +183,9 @@ export default {
     ...mapState("rooms", ["detailRoom"]),
   },
   created() {
-    if (this.isEdit) {
+    if (this.isEdit && this.detailRoom) {
       this.form = _cloneDeep(this.detailRoom);
-      this.fileList = [...this.form.images];
+      this.fileList = [...this.detailRoom.images];
     }
   },
   watch: {
