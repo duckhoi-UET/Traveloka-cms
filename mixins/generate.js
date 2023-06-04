@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export default {
   methods: {
     generateRandomNumberCard() {
@@ -101,6 +103,9 @@ export default {
     },
     currencyFormat(number) {
       return `${number ? parseInt(number, 10).toLocaleString("de-DE") : "0"} ₫`;
+    },
+    dateFormat(date) {
+      return moment(date).format("DD/MM/YYYY");
     },
   },
 };

@@ -21,19 +21,16 @@
       </div>
       <ct-pagination :data="pagination" />
     </div>
-    <UserDialog ref="userDialog" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
-import UserDialog from "@/components/rooms/Dialog.vue";
 import RoomTable from "@/components/rooms/Table.vue";
 import PageHeader from "@/components/common/PageHeader";
 
 export default {
   components: {
-    UserDialog,
     RoomTable,
     PageHeader,
   },
@@ -90,4 +87,3 @@ export default {
   },
 };
 </script>
-

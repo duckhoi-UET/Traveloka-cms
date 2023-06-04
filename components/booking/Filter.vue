@@ -9,9 +9,9 @@
         placeholder="Họ tên/ SĐT"
       />
       <SearchFilter
-        query="billNo"
-        label="Số hóa đơn"
-        placeholder="Số hóa đơn"
+        query="identificationNumber"
+        label="Số CCCD/CMND"
+        placeholder="Số CCCD/CMND"
       />
       <SearchFilter query="roomId" label="Số phòng" placeholder="Số phòng" />
 
@@ -19,12 +19,12 @@
         query="status"
         label="Trạng thái"
         placeholder="Trạng thái"
-        :options="status"
+        :options="ROOM_STATUS_OPTIONS"
       />
       <DateRangeFilter
         ref="dateFilter"
         label="Ngày tạo"
-        query="created"
+        query="createdAt"
         :allow-clear="false"
         customHandler
         @onChange="onFilter"
@@ -48,6 +48,7 @@ import DateRangeFilter from "@/components/filters/DateRange.vue";
 import SearchFilter from "@/components/filters/Search.vue";
 import SelectFilter from "@/components/filters/Select.vue";
 import SelectRemoteFilter from "@/components/filters/SelectRemote.vue";
+import { ROOM_STATUS_OPTIONS } from "@/constants/booking";
 
 export default {
   components: {
@@ -58,16 +59,7 @@ export default {
   },
   data() {
     return {
-      status: [
-        {
-          value: "SUCCESS",
-          label: "Đã kích hoạt",
-        },
-        {
-          value: "PENDING",
-          label: "Chờ xác nhận",
-        },
-      ],
+      ROOM_STATUS_OPTIONS,
     };
   },
   methods: {

@@ -6,10 +6,13 @@
     layout="vertical"
     :colon="false"
   >
-    <a-form-model-item label="Tên phòng" prop="name">
-      <a-input v-model="form.name" placeholder="Tên phòng" />
-    </a-form-model-item>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+      <a-form-model-item label="Tên phòng" prop="name">
+        <a-input v-model="form.name" placeholder="Tên phòng" />
+      </a-form-model-item>
+      <a-form-model-item label="Số phòng" prop="number">
+        <a-input v-model="form.number" placeholder="Số phòng" />
+      </a-form-model-item>
       <a-form-model-item label="Giá phòng" prop="price">
         <a-input v-model="form.price" placeholder="Giá phòng" />
       </a-form-model-item>
@@ -124,6 +127,7 @@ const defaultForm = {
   status: "1",
   images: [],
   content: "",
+  number: "",
 };
 
 export default {
@@ -146,6 +150,13 @@ export default {
           {
             required: true,
             message: "Vui lòng nhập tên phòng",
+            trigger: "change",
+          },
+        ],
+        number: [
+          {
+            required: true,
+            message: "Vui lòng nhập số phòng",
             trigger: "change",
           },
         ],
@@ -305,4 +316,3 @@ export default {
   }
 }
 </style>
-

@@ -16,13 +16,13 @@
         class="font-semibold"
       />
       <a-table-column
-        key="numberCard"
+        key="identificationNumber"
         title="CCCD/CMND"
-        data-index="numberCard"
+        data-index="identificationNumber"
         class="font-semibold"
         :width="120"
       />
-      <a-table-column key="phone" title="SĐT" data-index="phone" :width="150">
+      <a-table-column key="phone" title="SĐT" data-index="phone" :width="130">
         <template #default="phone">
           {{ phone | phoneFormat }}
         </template>
@@ -31,48 +31,49 @@
         key="email"
         title="Email"
         data-index="email"
-        :width="200"
+        :width="180"
       />
-      <a-table-column
-        key="createTime"
-        title="Ngày Đặt"
-        data-index="createTime"
-        :width="150"
-      >
+      <a-table-column key="createTime" title="Ngày Đặt" :width="200">
+        <template #default="item">
+          {{ dateFormat(item.bookFrom) }} - {{ dateFormat(item.bookTo) }}
+        </template>
       </a-table-column>
       <a-table-column
-        key="roomKey"
+        key="numberRoom"
         title="Số phòng"
-        data-index="roomKey"
+        data-index="numberRoom"
         :width="100"
       >
       </a-table-column>
-      <a-table-column key="status" title="Trạng Thái" :width="110">
-        <template #default="user">
-          <a-tag :color="user.status === 'SUCCESS' ? 'green' : 'orange'">
-            {{ user.status === "SUCCESS" ? "Đã xác nhận" : "Chờ xác nhận" }}
+      <a-table-column key="status" title="Trạng Thái" :width="100">
+        <template #default="booking">
+          <a-tag :color="getStatus(booking.status).color">
+            {{ getStatus(booking.status).label }}
           </a-tag>
         </template>
       </a-table-column>
 
-      <a-table-column key="actions" align="right" :width="80">
-        <template #default="_user">
+      <a-table-column key="actions" align="right" :width="70">
+        <template #default="booking">
           <a-dropdown :trigger="['click']">
             <div class="cursor-pointer hover:text-red-100">
               <i class="fas fa-ellipsis-h text-xl"></i>
             </div>
             <a-menu slot="overlay">
-              <a-menu-item key="0">
-                <div>
-                  <i class="fas fa-eye mr-2"></i>
-                  <a :href="_user">Xem chi tiết</a>
-                </div>
+              <a-menu-item key="0" @click="showDetail(booking._id)">
+                <i class="fas fa-eye mr-2"></i>
+                <span>Xem chi tiết</span>
               </a-menu-item>
-              <a-menu-item v-if="_user.status !== 'SUCCESS'" key="1">
-                <div>
-                  <i class="fas fa-check-circle mr-2"></i>
-                  <a href="http://www.taobao.com/">Xác nhận</a>
-                </div>
+              <a-menu-item key="1" v-if="booking.status == ROOM_STATUS.PENDING">
+                <i class="fas fa-check-circle mr-2"></i>
+                <span>Xác nhận</span>
+              </a-menu-item>
+              <a-menu-item
+                key="1"
+                v-if="booking.status != ROOM_STATUS.REJECTED"
+              >
+                <i class="fas fa-times-circle mr-2"></i>
+                <span>Hủy bỏ</span>
               </a-menu-item>
 
               <a-menu-item key="3">
@@ -85,24 +86,23 @@
         </template>
       </a-table-column>
     </a-table>
-    <UserDialog ref="userDialog" />
+    <DetailDialog ref="detailDialog" />
   </div>
 </template>
 
 <script>
-import _join from "lodash/join";
-import _map from "lodash/map";
-import UserDialog from "@/components/users/Dialog.vue";
+import { ROOM_STATUS_OPTIONS, ROOM_STATUS } from "@/constants/booking";
+import DetailDialog from "./Dialog.vue";
+import { mapActions } from "vuex";
+import generate from "@/mixins/generate";
 
 export default {
-  components: {
-    UserDialog,
-  },
-
+  mixins: [generate],
   props: {
     booking: {
       type: Array,
       required: true,
+      default: () => [],
     },
     loading: {
       type: Boolean,
@@ -113,28 +113,26 @@ export default {
       required: false,
     },
   },
+  components: {
+    DetailDialog,
+  },
+  data() {
+    return {
+      ROOM_STATUS,
+    };
+  },
 
   methods: {
+    ...mapActions("booking", ["getDetail"]),
     getIndex(text, record, index) {
-      return index + 1;
+      return (this.pagination.page - 1) * this.pagination.page_size + index + 1;
     },
-
-    getGroupName(groups) {
-      return _join(_map(groups, "description"), ", ");
+    getStatus(status) {
+      return ROOM_STATUS_OPTIONS.find((item) => item.value == status);
     },
-
-    openUserDialog(user) {
-      this.$refs.userDialog.open(user);
-    },
-
-    async toggleStatus(user) {
-      try {
-        await this.$api.users.toggleStatus(user.userId);
-        await this.$nuxt.refresh();
-        this.$message.success("Cập nhật trạng thái user thành công");
-      } catch (error) {
-        this.$handleError(error);
-      }
+    showDetail(id) {
+      this.getDetail(id);
+      this.$refs.detailDialog.open();
     },
   },
 };

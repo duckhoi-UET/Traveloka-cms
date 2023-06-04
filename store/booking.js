@@ -1,47 +1,33 @@
-import PAGINATION_CONFIG from "@/configs/pagination";
-
 export const state = () => ({
-  booking: [],
-  listBookingConst: [],
-  pagination: {
-    start: 1,
-    recordsTotal: 60,
-    page: 1,
-    length: 10,
-  },
+  detailBooking: null,
 });
 
 export const getters = {};
 
 export const mutations = {
-  SET_BOOKING(state, data) {
-    state.booking = [...data];
-  },
-  SET_BOOKING_CONST(state, data) {
-    state.listBookingConst = [...data];
+  SET_DETAIL_BOOKING(state, payload) {
+    state.detailBooking = payload;
   },
 };
 
 export const actions = {
-  setBooking({ commit }, data) {
-    commit("SET_BOOKING", data);
-    commit("SET_BOOKING_CONST", data);
+  createBooking({}, payload) {
+    return this.$axios.post("/booking/create", payload);
   },
-  filter({ commit, state }, data) {
-    if (data) {
-      const { from, to } = data;
-      let list = state.listBookingConst;
-      list = list.filter((value) => {
-        if (
-          new Date(value.createTime) >= new Date(from) &&
-          new Date(value.createTime) <= new Date(to)
-        )
-          return true;
-      });
-      commit("SET_BOOKING", list);
-    } else {
-      let list = state.listBookingConst;
-      commit("SET_BOOKING", list);
+  getAll({}, params) {
+    return this.$axios.get("/booking", { params });
+  },
+  async getDetail({ commit, dispatch }, params) {
+    try {
+      dispatch("setLoading", true, { root: true });
+      const result = await this.$axios.get(`/booking/${params}`);
+      if (result) {
+        commit("SET_DETAIL_BOOKING", result.data.booking);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      dispatch("setLoading", false, { root: true });
     }
   },
 };

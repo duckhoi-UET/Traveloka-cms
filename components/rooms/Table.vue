@@ -15,6 +15,13 @@
         class="font-semibold"
       />
       <a-table-column
+        key="number"
+        title="Số phòng"
+        :width="100"
+        data-index="number"
+        class="font-semibold"
+      />
+      <a-table-column
         key="price"
         title="Giá"
         class="font-semibold"
@@ -43,7 +50,7 @@
         title="Số người"
         data-index="persons"
         align="center"
-        :width="180"
+        :width="100"
       >
       </a-table-column>
       <a-table-column key="status" title="Trạng thái" :width="120">
@@ -168,7 +175,7 @@ export default {
         this.$refs.confirmDialog.open();
       }
     },
-    async handleDeleteRoom() {
+    async confirm() {
       try {
         this.setLoading(true);
         const result = await this.deleteRoom({ id: this.roomDelete._id });
@@ -191,4 +198,3 @@ export default {
   },
 };
 </script>
-

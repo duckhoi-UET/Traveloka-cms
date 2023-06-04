@@ -1,19 +1,17 @@
 <template>
   <div>
-    <div class="flex justify-between items-center">
-      <div class="font-semibold text-prim-100 text-2xl capitalize">
-        Danh sách đặt phòng
-      </div>
-      <!-- <a-button type="primary" ghost @click="$refs.userDialog.open()">
-        Thêm mới
-      </a-button> -->
-    </div>
+    <PageHeader
+      title="Danh sách đặt phòng"
+      isShowButtonRight
+      button="Thêm mới"
+      linkButton="/booking/add"
+    />
     <div class="mt-4">
       <FilterTable @onFilter="onFilter" @resetData="resetData" />
     </div>
     <BookingTable
       class="mt-4"
-      :loading="loading"
+      :loading="isLoading"
       :booking="booking"
       :pagination="pagination"
     />
@@ -21,60 +19,64 @@
       class="mt-4 flex flex-wrap md:flex-nowrap justify-center md:justify-between items-center gap-4"
     >
       <div class="text-gray-80 italic">
-        Hiển thị {{ booking.length }} trong tổng số
-        {{ pagination.recordsTotal }} mục
+        Hiển thị {{ booking.length }} trong tổng số {{ pagination?.total }} mục
       </div>
-      <!-- <ct-pagination :data="pagination" /> -->
+      <ct-pagination :data="pagination" />
     </div>
-    <UserDialog ref="userDialog" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
-import UserDialog from "@/components/users/Dialog.vue";
 import BookingTable from "@/components/booking/Table.vue";
 import FilterTable from "@/components/booking/Filter.vue";
 import generate from "@/mixins/generate";
+import PageHeader from "@/components/common/PageHeader";
 
 export default {
   mixins: [generate],
   components: {
-    UserDialog,
     BookingTable,
     FilterTable,
+    PageHeader,
   },
 
   data() {
     return {
-      loading: false,
+      booking: [],
+      pagination: null,
     };
   },
 
-  computed: {
-    ...mapState("booking", ["booking", "pagination"]),
+  watch: {
+    "$route.query.page"(value) {
+      this.getAllData({ page: value });
+    },
   },
-  mounted() {
-    this.generateData();
+
+  computed: {
+    ...mapState(["isLoading"]),
+  },
+  created() {
+    this.getAllData({ page: this.$route.query?.page });
   },
 
   methods: {
-    ...mapActions("booking", ["setBooking", "filter"]),
-    generateData() {
-      let data = [];
-      for (let i = 0; i < 60; i++) {
-        let item = {
-          fullName: this.generateFullName(),
-          numberCard: this.generateRandomNumberCard(),
-          phone: this.generatePhoneNumber(),
-          email: this.generateEmail(),
-          status: "SUCCESS",
-          roomKey: this.generateRoom(),
-          createTime: this.generateDate(),
-        };
-        data.push(item);
+    ...mapActions("booking", ["getAll"]),
+    ...mapActions(["setLoading"]),
+    async getAllData(params) {
+      try {
+        this.setLoading(true);
+        const response = await this.getAll(params);
+        if (response) {
+          this.booking = response.data.booking;
+          this.pagination = response.data.pagination;
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.setLoading(false);
       }
-      this.setBooking(data);
     },
     onFilter(data) {
       this.filter(data);
@@ -91,4 +93,3 @@ export default {
   },
 };
 </script>
-
