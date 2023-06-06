@@ -64,13 +64,16 @@
                 <i class="fas fa-eye mr-2"></i>
                 <span>Xem chi tiết</span>
               </a-menu-item>
-              <a-menu-item key="1" v-if="booking.status == ROOM_STATUS.PENDING">
+              <a-menu-item
+                key="1"
+                v-if="booking.status == BOOKING_STATUS.PENDING"
+              >
                 <i class="fas fa-check-circle mr-2"></i>
                 <span>Xác nhận</span>
               </a-menu-item>
               <a-menu-item
                 key="1"
-                v-if="booking.status != ROOM_STATUS.REJECTED"
+                v-if="booking.status != BOOKING_STATUS.REJECTED"
               >
                 <i class="fas fa-times-circle mr-2"></i>
                 <span>Hủy bỏ</span>
@@ -91,7 +94,7 @@
 </template>
 
 <script>
-import { ROOM_STATUS_OPTIONS, ROOM_STATUS } from "@/constants/booking";
+import { BOOKING_STATUS_OPTIONS, BOOKING_STATUS } from "@/constants/booking";
 import DetailDialog from "./Dialog.vue";
 import { mapActions } from "vuex";
 import generate from "@/mixins/generate";
@@ -118,7 +121,7 @@ export default {
   },
   data() {
     return {
-      ROOM_STATUS,
+      BOOKING_STATUS,
     };
   },
 
@@ -128,7 +131,7 @@ export default {
       return (this.pagination.page - 1) * this.pagination.page_size + index + 1;
     },
     getStatus(status) {
-      return ROOM_STATUS_OPTIONS.find((item) => item.value == status);
+      return BOOKING_STATUS_OPTIONS.find((item) => item.value == status);
     },
     showDetail(id) {
       this.getDetail(id);

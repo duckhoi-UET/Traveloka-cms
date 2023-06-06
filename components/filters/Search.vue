@@ -4,21 +4,28 @@
       {{ label }}
     </div>
     <a-input
-      :value="keySearch"
+      v-model="keySearch"
       :placeholder="placeholder"
       class="search-filter"
       :size="size"
       :allow-clear="clearable"
+      @blur="onSearch"
       @change="onChange"
     />
   </div>
 </template>
 
 <script>
+import _assign from "lodash/assign";
+import _map from "lodash/map";
+import _omit from "lodash/omit";
+import _debounce from "lodash/debounce";
+
 export default {
   props: {
     label: String,
-
+    value: String,
+    icon: String,
     placeholder: {
       type: String,
       default: "Tìm kiếm",
@@ -27,22 +34,67 @@ export default {
       type: String,
       default: "default",
     },
-
+    query: {
+      type: String,
+      default: "freeWord",
+    },
     clearable: {
       type: Boolean,
       default: true,
     },
-    keySearch: {
-      type: String,
-      default: "",
+  },
+
+  data() {
+    return {
+      keySearch: this.$route.query[this.query] || this.value,
+    };
+  },
+
+  watch: {
+    "$route.query": {
+      handler(query) {
+        this.keySearch = query[this.query];
+      },
+      deep: true,
+      immediate: true,
     },
   },
 
   methods: {
-    onChange(e) {
-      this.$emit("update:keySearch", e.target.value);
+    onSearch() {
+      if (this.query && this.keySearch) {
+        this.$router.push({
+          query: _assign(
+            {},
+            _omit(this.$route.query, _map(this.options, "value")),
+            {
+              [this.query]: this.keySearch,
+              page: 1,
+            }
+          ),
+        });
+      }
+
+      if (!this.keySearch) {
+        this.$router.push({
+          query: _assign({}, _omit(this.$route.query, [this.query])),
+        });
+      }
+    },
+
+    onChange() {
+      if (!this.keySearch) {
+        this.$router.push({
+          query: _assign({}, _omit(this.$route.query, [this.query])),
+        });
+      }
+    },
+    clear() {
+      this.keySearch = "";
+      this.$router.push({
+        query: _assign({}, _omit(this.$route.query, [this.query])),
+      });
     },
   },
 };
 </script>
-

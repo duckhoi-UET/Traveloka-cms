@@ -49,8 +49,8 @@ export default {
   },
 
   watch: {
-    "$route.query.page"(value) {
-      this.getAllData({ page: value });
+    "$route.query"(value) {
+      this.getAllData(value);
     },
   },
 
@@ -58,7 +58,7 @@ export default {
     ...mapState(["isLoading"]),
   },
   created() {
-    this.getAllData({ page: this.$route.query?.page });
+    this.getAllData(this.$route.query);
   },
 
   methods: {
@@ -79,10 +79,10 @@ export default {
       }
     },
     onFilter(data) {
-      this.filter(data);
+      this.getAllData(data);
     },
     resetData() {
-      this.filter(null);
+      this.getAllData();
     },
   },
 

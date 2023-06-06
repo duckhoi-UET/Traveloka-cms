@@ -14,7 +14,7 @@
         :default-value="defaultValue"
         format="MM/DD/YYYY"
         :value-format="valueFormat"
-        @change="onChange"
+        @change="onFilter"
       >
         <a-icon slot="suffixIcon" type="calendar" />
       </a-range-picker>
@@ -48,17 +48,14 @@ export default {
       type: String,
       default: "default",
     },
-    separator: {
-      type: String,
-      default: "##TO##",
-    },
+
     prefix: {
       type: String,
-      default: "From",
+      default: "from",
     },
     suffix: {
       type: String,
-      default: "To",
+      default: "to",
     },
     value: {
       type: Array,
@@ -76,17 +73,12 @@ export default {
 
   data() {
     let selectedValue = "";
-    if (this.separator) {
-      selectedValue = this.$route.query[this.query]
-        ? _split(this.$route.query[this.query], this.separator, 2)
-        : this.defaultValue;
-    } else {
-      selectedValue =
-        [
-          this.$route.query[`${this.query}${this.prefix}`],
-          this.$route.query[`${this.query}${this.suffix}`],
-        ] || this.defaultValue;
-    }
+
+    selectedValue =
+      [
+        this.$route.query[`${this.prefix}`],
+        this.$route.query[`${this.suffix}`],
+      ] || this.defaultValue;
 
     return {
       selectedValue,
@@ -106,18 +98,17 @@ export default {
 
   watch: {
     "$route.query": {
-      handler(query) {
+      handler() {
         let dates = [];
-        if (this.separator) {
-          dates = _split(query[this.query], this.separator, 2);
+        if (this.$route.query[`${this.prefix}`]) {
+          dates = [
+            this.$route.query[`${this.prefix}`],
+            this.$route.query[`${this.suffix}`],
+          ];
         } else {
-          dates =
-            [
-              this.$route.query[`${this.query}${this.prefix}`],
-              this.$route.query[`${this.query}${this.suffix}`],
-            ] || [];
+          this.clear();
         }
-        this.$emit("input", dates);
+
         this.selectValue = dates;
       },
       deep: true,
@@ -134,20 +125,16 @@ export default {
       if (dateStrings[0] === "" || dateStrings[1] === "") {
         this.clear();
       } else {
-        const from = dateStrings[0];
-        const to = dateStrings[1];
+        const from = dates[0];
+        const to = dates[1];
 
         if (this.customHandler) {
           this.$emit("onChange", { from, to });
         } else {
-          const query = this.separator
-            ? {
-                [this.query]: `${from}${this.separator}${to}`,
-              }
-            : {
-                [`${this.query}${this.prefix}`]: from,
-                [`${this.query}${this.suffix}`]: to,
-              };
+          const query = {
+            [`${this.prefix}`]: from,
+            [`${this.suffix}`]: to,
+          };
 
           this.$router.push({
             query: _assign({}, this.$route.query, query),
@@ -158,8 +145,13 @@ export default {
 
     clear() {
       this.selectedValue = [];
+      this.$router.push({
+        query: _assign(
+          {},
+          _omit(this.$route.query, [this.prefix, this.suffix])
+        ),
+      });
     },
   },
 };
 </script>
-

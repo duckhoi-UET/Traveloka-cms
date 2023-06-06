@@ -4,21 +4,22 @@
       {{ label }}
     </div>
     <a-select
-      :value="data"
+      v-model="data"
       class="w-full"
       :size="size"
       :placeholder="placeholder"
       :allow-clear="clearable"
       show-search
       :disabled="disabled"
+      :not-found-content="notFoundContent"
       @change="onChange"
     >
       <a-select-option
         v-for="(item, index) in options"
         :key="index"
-        :value="item.value"
+        :value="item[optionValue]"
       >
-        {{ item.label }}
+        {{ item[optionLabel] }}
       </a-select-option>
     </a-select>
   </div>
@@ -63,22 +64,62 @@ export default {
       type: String,
       default: "value",
     },
-
+    notFoundContent: {
+      type: String,
+      default: "Không có dữ liệu",
+    },
     disabled: {
       type: Boolean,
       default: false,
     },
-    data: {
-      type: String,
-      default: undefined,
+  },
+
+  data() {
+    const defaultValue =
+      this.$route.query[this.query] ||
+      (this.selectDefault ? this.options[0][this.optionValue] : undefined);
+
+    return {
+      data: /^-?\d+$/.test(defaultValue) ? defaultValue : defaultValue,
+    };
+  },
+
+  watch: {
+    "$route.query": {
+      handler(query) {
+        const data = query[this.query];
+
+        this.data = /^-?\d+$/.test(data) ? data : data;
+      },
+      deep: true,
+      immediate: true,
     },
   },
 
   methods: {
-    onChange(value) {
-      this.$emit("update:data", value);
+    onChange() {
+      this.$emit("change", this.data);
+      if (this.data || this.data == 0) {
+        this.$router.push({
+          query: _assign({}, this.$route.query, {
+            [this.query]: this.data,
+            page: 1,
+          }),
+        });
+      } else {
+        this.$router.push({
+          query: _assign({}, _omit(this.$route.query, [this.query]), {
+            page: 1,
+          }),
+        });
+      }
+    },
+    clear() {
+      this.data = undefined;
+      this.$router.push({
+        query: _assign({}, _omit(this.$route.query, [this.query])),
+      });
     },
   },
 };
 </script>
-
