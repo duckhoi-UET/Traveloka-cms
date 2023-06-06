@@ -7,19 +7,27 @@
         query="fullName"
         label="Họ tên/ SĐT"
         placeholder="Họ tên/ SĐT"
+        :keySearch.sync="formSearch.keySearch"
       />
       <SearchFilter
         query="identificationNumber"
         label="Số CCCD/CMND"
         placeholder="Số CCCD/CMND"
+        :keySearch.sync="formSearch.identificationNumber"
       />
-      <SearchFilter query="roomId" label="Số phòng" placeholder="Số phòng" />
+      <SearchFilter
+        query="roomId"
+        label="Số phòng"
+        placeholder="Số phòng"
+        :keySearch.sync="formSearch.roomId"
+      />
 
       <SelectFilter
         query="status"
         label="Trạng thái"
         placeholder="Trạng thái"
         :options="ROOM_STATUS_OPTIONS"
+        :data.sync="formSearch.status"
       />
       <DateRangeFilter
         ref="dateFilter"
@@ -27,7 +35,6 @@
         query="createdAt"
         :allow-clear="false"
         customHandler
-        @onChange="onFilter"
       />
     </div>
     <div class="flex justify-end gap-4 mt-4">
@@ -49,6 +56,9 @@ import SearchFilter from "@/components/filters/Search.vue";
 import SelectFilter from "@/components/filters/Select.vue";
 import SelectRemoteFilter from "@/components/filters/SelectRemote.vue";
 import { ROOM_STATUS_OPTIONS } from "@/constants/booking";
+import _cloneDeep from "lodash/cloneDeep";
+
+const defaultForm = {};
 
 export default {
   components: {
@@ -60,6 +70,7 @@ export default {
   data() {
     return {
       ROOM_STATUS_OPTIONS,
+      formSearch: _cloneDeep(defaultForm),
     };
   },
   methods: {
@@ -68,8 +79,10 @@ export default {
     },
     resetData() {
       this.$refs.dateFilter.clear();
-      this.$emit("resetData");
+      this.formSearch = _cloneDeep(defaultForm);
+      // this.$emit("resetData");
     },
   },
 };
 </script>
+

@@ -14,7 +14,7 @@
         :default-value="defaultValue"
         format="MM/DD/YYYY"
         :value-format="valueFormat"
-        @change="onFilter"
+        @change="onChange"
       >
         <a-icon slot="suffixIcon" type="calendar" />
       </a-range-picker>
@@ -162,3 +162,4 @@ export default {
   },
 };
 </script>
+

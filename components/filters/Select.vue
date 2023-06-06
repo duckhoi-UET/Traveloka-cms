@@ -4,14 +4,13 @@
       {{ label }}
     </div>
     <a-select
-      v-model="data"
+      :value="data"
       class="w-full"
       :size="size"
       :placeholder="placeholder"
       :allow-clear="clearable"
       show-search
       :disabled="disabled"
-      :not-found-content="notFoundContent"
       @change="onChange"
     >
       <a-select-option
@@ -64,52 +63,22 @@ export default {
       type: String,
       default: "value",
     },
-    notFoundContent: {
-      type: String,
-      default: "Không có dữ liệu",
-    },
+
     disabled: {
       type: Boolean,
       default: false,
     },
-  },
-
-  data() {
-    return {
-      data: undefined,
-    };
-  },
-
-  watch: {
-    "$route.query": {
-      handler(query) {
-        const data = query[this.query];
-
-        this.data = /^-?\d+$/.test(data) ? Number(data) : data;
-      },
-      deep: true,
-      immediate: true,
+    data: {
+      type: String,
+      default: undefined,
     },
   },
 
   methods: {
-    onChange() {
-      this.$emit("change", this.data);
-      if (this.data || this.data === 0) {
-        this.$router.push({
-          query: _assign({}, this.$route.query, {
-            [this.query]: this.data,
-            start: 0,
-          }),
-        });
-      } else {
-        this.$router.push({
-          query: _assign({}, _omit(this.$route.query, [this.query]), {
-            start: 0,
-          }),
-        });
-      }
+    onChange(value) {
+      this.$emit("update:data", value);
     },
   },
 };
 </script>
+
