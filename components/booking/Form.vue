@@ -42,7 +42,7 @@
           class="w-full"
           v-model="form.date"
           :placeholder="['Từ ngày', 'Đến ngày']"
-          format="MM/DD/YYYY"
+          format="DD/MM/YYYY"
           allow-clear
           @change="handleChooseDate"
         />

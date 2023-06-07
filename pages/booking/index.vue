@@ -21,7 +21,7 @@
       <div class="text-gray-80 italic">
         Hiển thị {{ booking.length }} trong tổng số {{ pagination?.total }} mục
       </div>
-      <ct-pagination :data="pagination" />
+      <ct-pagination :data="pagination" @change="handleChangePagination" />
     </div>
   </div>
 </template>
@@ -48,11 +48,11 @@ export default {
     };
   },
 
-  watch: {
-    "$route.query"(value) {
-      this.getAllData(value);
-    },
-  },
+  // watch: {
+  //   "$route.query"(value) {
+  //     this.getAllData(value);
+  //   },
+  // },
 
   computed: {
     ...mapState(["isLoading"]),
@@ -84,6 +84,9 @@ export default {
     resetData() {
       this.getAllData();
     },
+    handleChangePagination(page) {
+      this.getAllData({ ...this.$route.query, page: page });
+    },
   },
 
   head() {
@@ -93,3 +96,4 @@ export default {
   },
 };
 </script>
+

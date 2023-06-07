@@ -57,7 +57,7 @@
 <script>
 import { mapState } from "vuex";
 import generate from "@/mixins/generate";
-import { ROOM_STATUS_OPTIONS } from "@/constants/booking";
+import { BOOKING_STATUS_OPTIONS } from "@/constants/booking";
 export default {
   mixins: [generate],
   data() {
@@ -79,7 +79,7 @@ export default {
       this.visible = false;
     },
     getStatus(status) {
-      return ROOM_STATUS_OPTIONS.find((item) => item.value == status);
+      return BOOKING_STATUS_OPTIONS.find((item) => item.value == status);
     },
   },
 };
@@ -90,3 +90,4 @@ export default {
   @apply font-bold;
 }
 </style>
+

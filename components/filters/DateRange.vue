@@ -12,7 +12,7 @@
         :placeholder="['Từ ngày', 'Đến ngày']"
         :size="size"
         :default-value="defaultValue"
-        format="MM/DD/YYYY"
+        format="DD/MM/YYYY"
         :value-format="valueFormat"
         @change="onFilter"
       >
@@ -125,8 +125,8 @@ export default {
       if (dateStrings[0] === "" || dateStrings[1] === "") {
         this.clear();
       } else {
-        const from = dates[0];
-        const to = dates[1];
+        const from = dateStrings[0];
+        const to = dateStrings[1];
 
         if (this.customHandler) {
           this.$emit("onChange", { from, to });
@@ -155,3 +155,4 @@ export default {
   },
 };
 </script>
+
