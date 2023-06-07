@@ -32,7 +32,7 @@ export const actions = {
     }
   },
   updateRoom({}, payload) {
-    return this.$axios.post(`/rooms/${payload.id}`, payload.data);
+    return this.$axios.patch(`/rooms/${payload.id}`, payload.data);
   },
 };
 

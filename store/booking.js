@@ -30,4 +30,11 @@ export const actions = {
       dispatch("setLoading", false, { root: true });
     }
   },
+  deleteBooking({}, payload) {
+    return this.$axios.delete(`/booking/${payload.id}`);
+  },
+  updateBooking({}, payload) {
+    return this.$axios.patch(`/booking/${payload.id}`, payload.data);
+  },
 };
+

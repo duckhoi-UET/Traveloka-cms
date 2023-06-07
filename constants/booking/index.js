@@ -22,3 +22,10 @@ export const BOOKING_STATUS_OPTIONS = [
   },
 ];
 
+export const BOOKING_MENU_TABLE = {
+  DETAIL: "detail",
+  ACCEPT: "accept",
+  REJECT: "reject",
+  DELETE: "delete",
+};
+

@@ -14,6 +14,7 @@
       :loading="isLoading"
       :booking="booking"
       :pagination="pagination"
+      @update="reloadData"
     />
     <div
       class="mt-4 flex flex-wrap md:flex-nowrap justify-center md:justify-between items-center gap-4"
@@ -83,6 +84,9 @@ export default {
     },
     resetData() {
       this.getAllData();
+    },
+    reloadData() {
+      this.getAllData(this.$route.query);
     },
     handleChangePagination(page) {
       this.getAllData({ ...this.$route.query, page: page });
