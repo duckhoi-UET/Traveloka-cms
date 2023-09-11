@@ -67,13 +67,10 @@
         :visible="previewVisible"
         :footer="null"
         @cancel="handleClosePreview"
+        width="1000px"
       >
         <div class="">
-          <img
-            alt="example"
-            class="max-w-[350px] max-h-[500px] mx-auto"
-            :src="previewImage"
-          />
+          <img alt="example" :src="previewImage" />
         </div>
       </a-modal>
       <a-upload
@@ -268,7 +265,7 @@ export default {
           const image = {
             ...file,
             id: uuidv4(),
-            source: response.data.fileUrl,
+            source: response.data.url,
             previewImage: preview,
           };
           this.fileList.push(image);
@@ -316,3 +313,4 @@ export default {
   }
 }
 </style>
+
